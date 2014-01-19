@@ -35,7 +35,9 @@ class Game
 			@winner = there_is_a_winner() #=====
 			puts "winner = #{@winner}"
 			if(@winner || ! @board.any_vacant_positions_left() )
+				puts "\033[101mWINNER!!!!\033[0m"
 				puts "There was a winner, winner is  #{@players[@winner].name}\ngame over!"
+        @board.print_board(@players[0].name, @players[1].name)
 				@game_over = true;
 			end
 		end
@@ -64,16 +66,15 @@ class Game
 
 	def there_is_a_winner()
 		update_player_moves_arrays()
-		puts "Inside method = there_is_a_winner, updated player_moves_arrays"
+		puts "Inside method to check if there is a winner, updated player_moves_arrays"
 		puts "@players[0].moves = #{@players[0].moves.inspect}"
 		puts "@players[1].moves = #{@players[1].moves.inspect}"
 		winner = false
 		#If either player have played less than 3 rounds they cannot win
 		if (@players[0].moves.size < 3 && @players[1].moves.size < 3)
-			puts "Inside method = there_is_a_winner, returning winner = false"
+			puts "Inside method to check if there is a winner, no winner found"
 			return winner
 		else
-			puts "Inside method = there_is_a_winner, "
 			@win_moves.each_with_index do |arr, index|
 				puts "@win_moves[#{index}]=#{arr}"
 				matchp0 = 0
