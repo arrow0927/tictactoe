@@ -1,7 +1,7 @@
 
 class Board
 	attr_accessor  :pos_hash
-	
+	BOARD_SIZE = 3
 	
 
 def initialize()
@@ -9,7 +9,9 @@ def initialize()
 # @pos_hash{"a1"=>{"belongs_to"=>nil}, "a2"=>{"belongs_to"=>nil} }
 end
 
-
+def get_board_size()
+  BOARD_SIZE
+end
 	def update_board(choicen_position , current_player_index)
 		#Add choice to positions hash	
 		#puts "@pos_hash before update = #{@pos_hash.inspect }"
@@ -20,8 +22,8 @@ end
 
 #belongs_to points to the value of the index in the @players array in Game
 	def initialize_position_hash
-		rows = (0..2).to_a
-		cols = (0..2).to_a
+		rows = (0..BOARD_SIZE-1).to_a
+		cols = (0..BOARD_SIZE-1).to_a
 		pos_keys = rows.product(cols) #[[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2]]
     pos_keys_hash = Hash[pos_keys.map {|pkey|[pkey, Hash["belongs_to" => nil] ] }]
 		puts "Initialized Board Positions: #{pos_keys_hash.inspect}"

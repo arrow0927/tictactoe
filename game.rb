@@ -2,17 +2,16 @@
 	require_relative 'dbmod'
 	require_relative "Player"
 	require_relative "Board"
-  require_relative "ai"
+  require_relative "Ai"
 
 class Game
 
-	attr_accessor :current_player_index, :game_over, :players, :winner, :board, :curr_move, :win_moves, :ai
+	attr_accessor :current_player_index, :game_over, :players, :winner, :board, :curr_move, :ai
 
 	def initialize(options)
 		@board = Board.new()
-		@win_moves = initialize_winning_moves
 		@players = Array.new()
-		
+
 		@players[0] = Player.new(options[:player1_name], false)
 		if(options[:choice] == "player")
 			@players[1] = Player.new(options[:player2_name], false)
@@ -24,17 +23,16 @@ class Game
 		@game_over = false
 		@winner = false
 		@curr_move = nil
-		
 	end
 
 
 	def play_game()
-
 		while(@game_over == false)
 			@board.print_board(@players[0].name, @players[1].name)
 			chosen_position = next_move() #Prompts player for position, checks input from player, returns it ----
 			@board.update_board(chosen_position, @current_player_index ) #updates positions in board@board.
-			update_player_moves_arrays()
+			update_player_moves_hash()
+			
 =begin
 			@winner = there_is_a_winner()
 			puts "winner = #{@winner}"
@@ -108,39 +106,40 @@ class Game
 
 		return winner
 	end 
-
-
-
-
-
 		end
 	end
 	
-def update_player_moves_arrays
-  puts "Updating player_moves_arrays"
-	player0_arr = Array.new()
-	player1_arr = Array.new()
+def update_player_moves_hash
+  puts "Updating player_moves_hash"
+  keys = (0..@board.get_board_size()-1)
+  player0_hash = {"rows" => nil, "cols" => nil}
+  player1_hash = {"rows" => nil, "cols" => nil}
+	player0_hash["rows"] = Hash[keys.map {|pkey|[pkey, Array.new() ] }]
+	player0_hash["cols"] = Hash[keys.map {|pkey|[pkey, Array.new() ] }]
+	player1_hash["rows"] = Hash[keys.map {|pkey|[pkey, Array.new() ] }]
+	player1_hash["cols"] = Hash[keys.map {|pkey|[pkey, Array.new() ] }]
+	
 	@board.pos_hash.keys.each do |pos|
 		print "position = #{pos}\t"
 		player_index = @board.pos_hash[pos]["belongs_to"]
 		case player_index
 		when 0
 		  print "belongs to #{@players[0].name}\n"
-			player0_arr << pos
-			
+			player0_hash["rows"][pos[0]] << pos
+			player0_hash["cols"][pos[1]] << pos
 		when 1
 		  print "belongs to #{@players[1].name}\n"
-			player1_arr << pos
+			player1_hash["rows"][pos[0]] << pos
+			player1_hash["cols"][pos[1]] << pos
 		else
 			puts "Board position is vacant"
 		end
 	end
-	@players[0].moves = player0_arr 
-	@players[1].moves = player1_arr
-	puts "#{@players[0].name}'s moves array = #{@players[0].moves}"
-	puts "#{@players[1].name}'s moves array = #{@players[1].moves}"
+	@players[0].winning_sequences_tracker = player0_hash 
+	@players[1].winning_sequences_tracker = player1_hash
+	puts "#{@players[0].name}'s winning_sequences_tracker = #{@players[0].winning_sequences_tracker}"
+	puts "#{@players[1].name}'s winning_sequences_tracker = #{@players[1].winning_sequences_tracker}"
 end
-
 
 def initialize_winning_moves
 		wm = [
