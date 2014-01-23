@@ -34,6 +34,8 @@ class Game
 			@board.print_board(@players[0].name, @players[1].name)
 			chosen_position = next_move() #Prompts player for position, checks input from player, returns it ----
 			@board.update_board(chosen_position, @current_player_index ) #updates positions in board@board.
+			update_player_moves_arrays()
+=begin
 			@winner = there_is_a_winner()
 			puts "winner = #{@winner}"
 			if(@winner || ! @board.any_vacant_positions_left() )
@@ -42,6 +44,7 @@ class Game
         @board.print_board(@players[0].name, @players[1].name)
 				@game_over = true;
 			end
+=end
 		end
 	end
 
@@ -73,7 +76,6 @@ class Game
 	
 
 	def there_is_a_winner()
-		update_player_moves_arrays()
 		puts "Inside method to check if there is a winner, updated player_moves_arrays"
 		puts "@players[0].moves = #{@players[0].moves.inspect}"
 		puts "@players[1].moves = #{@players[1].moves.inspect}"
@@ -115,21 +117,28 @@ class Game
 	end
 	
 def update_player_moves_arrays
+  puts "Updating player_moves_arrays"
 	player0_arr = Array.new()
 	player1_arr = Array.new()
 	@board.pos_hash.keys.each do |pos|
+		print "position = #{pos}\t"
 		player_index = @board.pos_hash[pos]["belongs_to"]
 		case player_index
 		when 0
+		  print "belongs to #{@players[0].name}\n"
 			player0_arr << pos
+			
 		when 1
+		  print "belongs to #{@players[1].name}\n"
 			player1_arr << pos
 		else
-			#puts "Board position #{pos} is nil"
+			puts "Board position is vacant"
 		end
 	end
 	@players[0].moves = player0_arr 
 	@players[1].moves = player1_arr
+	puts "#{@players[0].name}'s moves array = #{@players[0].moves}"
+	puts "#{@players[1].name}'s moves array = #{@players[1].moves}"
 end
 
 
