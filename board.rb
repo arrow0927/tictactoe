@@ -13,16 +13,19 @@ end
 	def update_board(choicen_position , current_player_index)
 		#Add choice to positions hash	
 		#puts "@pos_hash before update = #{@pos_hash.inspect }"
+		puts "Chosen position = #{choicen_position.inspect}"
 		@pos_hash[choicen_position]["belongs_to"] = current_player_index
 		#puts "@pos_hash after update = #{@pos_hash.inspect }"
 	end
 
 #belongs_to points to the value of the index in the @players array in Game
 	def initialize_position_hash
-		keys = ["a1", "a2", "a3", "b1", "b2", "b3", "c1", "c2", "c3"]
-		ph = Hash[keys.map {|key|[key, Hash["belongs_to" => nil] ] }]
-		puts "Initialized Board Positions: #{ph.inspect}"
-		ph
+		rows = (0..2).to_a
+		cols = (0..2).to_a
+		pos_keys = rows.product(cols) #[[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2]]
+    pos_keys_hash = Hash[pos_keys.map {|pkey|[pkey, Hash["belongs_to" => nil] ] }]
+		puts "Initialized Board Positions: #{pos_keys_hash.inspect}"
+		pos_keys_hash
 	end
 
 	
@@ -32,14 +35,25 @@ end
 		print "\t \033[31m#{player0Name} is red\033[0m \t\t"
 		print "\033[34m#{player1Name} is blue\033[0m \n"
 		puts "*" * 60
-		('a'..'c').each do |row|
-			print_row(row)
-		end
+		(0..2).each do |row|
+	     print_row(row)
+	  end
 		puts ""
 		puts "*" * 60
 		puts ""
 	end
-
+	
+  def print_row(row)
+		(0..2).each do |col|
+			pos_arr = [row,col]
+			#puts "pos_arr = #{pos_arr}"
+			cp = colored_position(pos_arr)
+			print "\t"
+			print cp
+			print "\t"
+		end	
+		puts ""
+	end
 	
 	def colored_position(position)
 		colored_pos = nil
@@ -53,18 +67,7 @@ end
 	colored_pos		
 	end
 
-	def print_row(row)
-		#rows = a, b, c
-		#cols = 1, 2, 3
-		(1..3).each do |col|
-			pos = "#{row}#{col.to_s}"
-			cp = colored_position(pos)
-			print "\t"
-			print cp
-			print "\t"
-		end	
-		puts ""
-	end
+	
 
 
 	def any_vacant_positions_left()
@@ -77,16 +80,20 @@ end
 		vacancies
 	end
 
-	def is_legalpos(postion)
+	def is_legalpos(postion_arr)
 		legal = false
+	  if(!postion_arr.kind_of?(Array) && postion_arr.size > 2)
+		    puts "pos_array = #{pos_array} is not array or too long"
+    else    
 			#first make sure that 
 			@pos_hash.keys.each do|key|	
-				if(key.casecmp(postion) == 0) #the choice has to be a legal position 
+				if(key == postion_arr) #the choice has to be a legal position 
 					if( (@pos_hash[key]["belongs_to"]).nil? ) # and it has to be available
 						legal = true
 					end
 				end
 			end
+		end
 		if (legal) 
 			puts "\t\tyour move was legal"
 		else
@@ -94,5 +101,4 @@ end
 		end
 		legal
 	end
-
 end
