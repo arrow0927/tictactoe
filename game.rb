@@ -33,9 +33,10 @@ class Game
 			@board.update_board(chosen_position, @current_player_index ) #updates positions in board@board.
 			update_player_moves_hash()
 			
-=begin
+
 			@winner = there_is_a_winner()
 			puts "winner = #{@winner}"
+=begin
 			if(@winner || ! @board.any_vacant_positions_left() )
 				puts "\033[101mWINNER!!!!\033[0m"
 				puts "There was a winner, winner is  #{@players[@winner].name}\ngame over!"
@@ -74,39 +75,30 @@ class Game
 	
 
 	def there_is_a_winner()
-		puts "Inside method to check if there is a winner, updated player_moves_arrays"
-		puts "@players[0].moves = #{@players[0].moves.inspect}"
-		puts "@players[1].moves = #{@players[1].moves.inspect}"
+		puts "Inside method to check if there is a winner"
 		winner = false
 		#If either player have played less than 3 rounds they cannot win
-		if (@players[0].moves.size < 3 && @players[1].moves.size < 3)
-			puts "Inside method to check if there is a winner, no winner found"
-			return winner
-		else
-			@win_moves.each_with_index do |arr, index|
-				puts "@win_moves[#{index}]=#{arr}"
-				matchp0 = 0
-				matchp1 = 0
-				arr.each do|el|
-					if(@players[0].moves.include?(el))
-						matchp0 = matchp0 + 1
-					end 
-					if(@players[1].moves.include?(el))
-						matchp1 = matchp1 + 1
-					end 
-			end
-		puts "matchp0 = #{matchp0}"
-		puts "matchp1 = #{matchp1}"
-		if(matchp0 == 3) 
+		player0_rows_occupied = get_row_occupancy_numbers(0)
+		player0_cols_occupied = get_col_occupancy_numbers(0)
+		player1_rows_occupied = get_row_occupancy_numbers(1)
+		player1_cols_occupied = get_col_occupancy_numbers(1)
+    # player0_leftdiag_occupied = 
+    # player0_rightdiag_occupied = 
+    # player1_leftdiag_occupied = 
+    # player1_rightdiag_occupied =
+		puts "player0_rows_occupied = #{player0_rows_occupied}"
+		puts "player0_cols_occupied = #{player0_cols_occupied}"
+		puts "player1_rows_occupied = #{player1_rows_occupied}"
+		puts "player1_cols_occupied = #{player1_cols_occupied}"
+		
+		if (player0_rows_occupied.include?(@board.get_board_size()) || player0_cols_occupied.include?(@board.get_board_size()) )#|| player0_leftdiag_occupied ==3 || player0_rightdiag_occupied == 3)
 			winner = 0
-		end
-		if(matchp1 == 3) 
-			winner = 1
-		end
-
-		return winner
-	end 
-		end
+		elsif (player1_rows_occupied.include?(@board.get_board_size()) || player1_cols_occupied.include?(@board.get_board_size()))#|| player1_leftdiag_occupied ==3 || player1_rightdiag_occupied == 3)
+			winner = 1		  
+	  else
+	    puts "No winner found"
+		end 
+		winner
 	end
 	
 def update_player_moves_hash
@@ -155,10 +147,28 @@ def initialize_winning_moves
 		puts "Initialized winning moves = #{wm.inspect}"
 		wm
 	end
-	
 
+  def get_row_occupancy_numbers(player_index)
+    row_occupancy = Array.new()
+    @players[player_index].winning_sequences_tracker["rows"].keys.each do |row|
+      puts "#{@players[player_index].name} is occupying #{@players[player_index].winning_sequences_tracker["rows"][row].size} spots in row #{row}"
+      row_occupancy[row] = @players[player_index].winning_sequences_tracker["rows"][row].size
+    end
+    row_occupancy
+  end 	
 
+  def get_col_occupancy_numbers(player_index)
+    col_occupancy = Array.new()
+    @players[player_index].winning_sequences_tracker["cols"].keys.each do |col|
+      puts "#{@players[player_index].name} is occupying #{@players[player_index].winning_sequences_tracker["cols"][col].size} spots in col #{col}"
+      col_occupancy[col] = @players[player_index].winning_sequences_tracker["cols"][col].size
+    end
+    col_occupancy
+	end
 	
+	def get_diag_occupancy_numbers(player_index)
+	  
+  end
 
 	def stop_game()
 		puts "Stop game invoked"
