@@ -68,7 +68,8 @@ class Game
   		end
 		else #this section if its the computer's turn - ai decides choice
 		puts "Computer has chosen........."
-		choice_arr = ai.get_optimal_position()
+		ai.get_optimal_position()
+		choice_arr = ai.choose_position()
 		end
 		choice_arr
 	end
@@ -150,8 +151,8 @@ def update_player_moves_hash
 	end
 	@players[0].winning_sequences_tracker = p0_h 
 	@players[1].winning_sequences_tracker = p1_h
-	#puts "#{@players[0].name}'s winning_sequences_tracker = #{@players[0].winning_sequences_tracker}"
-	#puts "#{@players[1].name}'s winning_sequences_tracker = #{@players[1].winning_sequences_tracker}"
+	puts "#{@players[0].name}'s winning_sequences_tracker = #{@players[0].winning_sequences_tracker}"
+	puts "#{@players[1].name}'s winning_sequences_tracker = #{@players[1].winning_sequences_tracker}"
 end
 
 
@@ -165,6 +166,7 @@ end
       #puts "#{@players[player_index].name} is occupying #{@players[player_index].winning_sequences_tracker["rows"][row].size} spots in row #{row}"
       row_occupancy[row] = @players[player_index].winning_sequences_tracker["rows"][row].size
     end
+    #returns an array [0,3,1] where index of the array is the row number and the element is the number of positions in that row that belong to this player
     row_occupancy
   end 	
 
@@ -174,7 +176,8 @@ end
       #puts "#{@players[player_index].name} is occupying #{@players[player_index].winning_sequences_tracker["cols"][col].size} spots in col #{col}"
       col_occupancy[col] = @players[player_index].winning_sequences_tracker["cols"][col].size
     end
-    col_occupancy
+    #returns an array [0,3,1] where index of the array is the column number and the element is the number of positions in that column that belong to this player
+    col_occupancy 
 	end
 	
 	def get_left_diag_occupancy_numbers(player_index)
@@ -186,6 +189,7 @@ end
      end
    end
    #puts "#{@players[player_index].name} is occupying #{left_diag_occupancy.size} spots in left diagonal"
+   # returns this -> left_diag_occupancy = [[0, 0], [1, 1], [2, 2]] ie all the positions in the left diagonal that are occupied by this player
     left_diag_occupancy
   end
   
@@ -197,6 +201,7 @@ end
        end
      end
       #puts "#{@players[player_index].name} is occupying #{right_diag_occupancy.size} spots in right diagonal"
+      # returns this -> right_diag_occupancy = [[2, 0], [1, 1] ] ie all the positions in the right diagonal that are occupied by this player
       right_diag_occupancy
   end
   
