@@ -2,19 +2,29 @@
 class Ai
   
   require_relative 'player'
-  attr_accessor :players
+  require_relative 'game'
+  attr_accessor :players, :game
   
   
   
-  def initialize(players)
+  def initialize(players, game)
     @players = players
+    @game = game
+    puts "AI.game instance_of #{@game.instance_of?(Game)}"
+    puts "AI.game kind_of #{@game.kind_of?(Game)}"
     puts "AI is activated... for contest between #{@players[0].name} and #{@players[1].name}"
   end
   
-  #After each move AI will update both players winning sequences
-  def update_players_winning_sequences()
-    @player[0].update_winning_sequences_tracker()
-    @player[1].update_winning_sequences_tracker()
-  end
+ def get_optimal_position()
+   # Look at opponents positions
+   
+   # Find how many moves before he wins for every given position
+   
+   # Pick that position with the least amount of moves for him to win
+   
+   #Compare that position to the position that has 
+   
+   
+ end
   
 end

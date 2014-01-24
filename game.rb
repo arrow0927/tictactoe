@@ -17,7 +17,7 @@ class Game
 			@players[1] = Player.new(options[:player2_name], false)
 		else
 			@players[1] = Player.new("Computer", true)
-			@ai = Ai.new(@players)
+			@ai = Ai.new(@players, self) # send a copy of game object to ai
 		end
 		@current_player_index = 1
 		@game_over = false
@@ -56,7 +56,7 @@ class Game
 		got_choice = false
     
     #this section if its the human's turn - ask human for choice
-    #if(!@players[@current_player_index].is_computer)
+    if(!@players[@current_player_index].is_computer)
 		  while(!got_choice)
   			puts "#{@players[@current_player_index].name} your turn...."	
   			puts "enter the position. For example enter: 0,0"
@@ -66,10 +66,10 @@ class Game
   				got_choice = true
   			end
   		end
-		#else #this section if its the computer's turn - ai decides choice
-		#choice = ai.get_optimal_position()
-		#end
-		#@ai.update_players_winning_sequences()
+		else #this section if its the computer's turn - ai decides choice
+		puts "Computer has chosen........."
+		choice_arr = ai.get_optimal_position()
+		end
 		choice_arr
 	end
 
@@ -154,23 +154,10 @@ def update_player_moves_hash
 	#puts "#{@players[1].name}'s winning_sequences_tracker = #{@players[1].winning_sequences_tracker}"
 end
 
-# def initialize_winning_moves
-#     wm = [
-#       [[0,0],[0,1], [0,2]],
-#       [[1,0],[1,1], [1,2]],
-#       [[2,0],[2,1], [2,2]],
-#       [[0,0],[1,0], [2,0]],
-#       [[0,1],[1,1], [2,1]],
-#       [[0,2],[1,2], [2,2]],
-#       [[0,0],[1,1], [2,2]],
-#       [[0,2],[1,1], [2,0]],
-#       ]
-#     puts "Initialized winning moves = #{wm.inspect}"
-#     wm
-#   end
+
 	
   # ash's winning_sequences_tracker = {"rows"=>{0=>[[0, 0], [0, 1], [0, 2]], 1=>[], 2=>[]}, "cols"=>{0=>[[0, 0]], 1=>[[0, 1]], 2=>[[0, 2]]}}
-  # punya's winning_sequences_tracker = {"rows"=>{0=>[], 1=>[], 2=>[[2, 1], [2, 2]]}, "cols"=>{0=>[], 1=>[[2, 1]], 2=>[[2, 2]]}}
+  # der's winning_sequences_tracker = {"rows"=>{0=>[], 1=>[], 2=>[[2, 1], [2, 2]]}, "cols"=>{0=>[], 1=>[[2, 1]], 2=>[[2, 2]]}}
   
   def get_row_occupancy_numbers(player_index)
     row_occupancy = Array.new()
@@ -213,15 +200,7 @@ end
       right_diag_occupancy
   end
   
-  #@players[player_index].winning_sequences_tracker = {"rows"=>{0=>[[0, 0]], 1=>[], 2=>[]}, "cols"=>{0=>[[0, 0]], 1=>[], 2=>[]}, 
-  #"left_diag"=>{[0, 0]=>1, [1, 1]=>nil, [2, 2]=>nil}, "right_diag"=>{[2, 0]=>nil, [1, 1]=>nil, [0, 2]=>nil}}
-  
-  #ash's winning_sequences_tracker = {"rows"=>{0=>[[0, 0]], 1=>[], 2=>[]}, "cols"=>{0=>[[0, 0]], 1=>[], 2=>[]}}
-   #tom's winning_sequences_tracker = {"rows"=>{0=>[], 1=>[], 2=>[[2, 2]]}, "cols"=>{0=>[], 1=>[], 2=>[[2, 2]]}}
-   # unique_positions for player ash = [[0, 0]]
-   #   unique_positions for player ash = [[0, 0]]
-   #   unique_positions for player tom = [[2, 2]]
-   #   unique_positions for player tom = [[2, 2]]
+ 
   
   def get_all_positions_occupied_by_player(player_index)
     unique_positions = Array.new()
