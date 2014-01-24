@@ -31,9 +31,9 @@ class Game
 			@board.print_board(@players[0].name, @players[1].name)
 			chosen_position = next_move() #Prompts player for position, checks input from player, returns it ----
 			@board.update_board(chosen_position, @current_player_index ) #updates positions in board@board.
-			update_player_moves_hash()
+			update_player_moves_hash() #updates the winning_sequences_tracker variables within all players 
 			@winner = there_is_a_winner()
-			vacant_pos = num_vacant_positions_left()
+			vacant_pos = num_vacant_positions_left() 
 			puts "num_vacant_positions_left = #{vacant_pos}"
 			if(@winner || ( vacant_pos == 0) )
 				@game_over = true;
@@ -73,37 +73,29 @@ class Game
 		choice_arr
 	end
 
-	# This method tells us how many positions are occupied by a player in any given row, in any given column
+	# This method tells us how many positions are occupied by a player in any given row, in any given column, in any given digonal
 	# When 3 positions are occupied it means that the entire row is occupied by this player and he is the winner
-  # player0_rows_occupied = [3, 0, 0]
-  #   player0_cols_occupied = [1, 1, 1]
-  #   player1_rows_occupied = [0, 0, 2]
-  #   player1_cols_occupied = [0, 1, 1]
+  # p0_rows = [3, 0, 0] --> player 0 is winner because row[0] has 3 positions occupied
+  #   p0_cols = [1, 1, 1]
+  #   p1_rows = [0, 0, 2]
+  #   p1_cols = [0, 1, 1]
 	def there_is_a_winner()
 		#puts "Inside method to check if there is a winner"
 		winner = false
 		
-		player0_rows_occupied = get_row_occupancy_numbers(0)
-		player0_cols_occupied = get_col_occupancy_numbers(0)
-		player1_rows_occupied = get_row_occupancy_numbers(1)
-		player1_cols_occupied = get_col_occupancy_numbers(1)
-    player0_leftdiag_occupied = get_left_diag_occupancy_numbers(0)
-    player0_rightdiag_occupied = get_right_diag_occupancy_numbers(0)
-    player1_leftdiag_occupied = get_left_diag_occupancy_numbers(1)
-    player1_rightdiag_occupied = get_right_diag_occupancy_numbers(1)
-		# puts "player0_rows_occupied = #{player0_rows_occupied}"
-		#     puts "player0_cols_occupied = #{player0_cols_occupied}"
-		#     puts "player0_leftdiag_occupied = #{player0_leftdiag_occupied}"
-		#     puts "player0_rightdiag_occupied = #{player0_rightdiag_occupied}"
-		#     
-		#     puts "player1_rows_occupied = #{player1_rows_occupied}"
-		#     puts "player1_cols_occupied = #{player1_cols_occupied}"
-		#     puts "player1_leftdiag_occupied = #{player1_leftdiag_occupied}"
-		#     puts "player1_rightdiag_occupied = #{player1_rightdiag_occupied}"
+		p0_rows = get_row_occupancy_numbers(0)
+		p0_cols = get_col_occupancy_numbers(0)
+		p1_rows = get_row_occupancy_numbers(1)
+		p1_cols = get_col_occupancy_numbers(1)
+    p0_ld = get_left_diag_occupancy_numbers(0)
+    p0_rd = get_right_diag_occupancy_numbers(0)
+    p1_ld = get_left_diag_occupancy_numbers(1)
+    p1_rd = get_right_diag_occupancy_numbers(1)
+    bs = @board.get_board_size()
 		
-		if (player0_rows_occupied.include?(@board.get_board_size()) || player0_cols_occupied.include?(@board.get_board_size()) || player0_leftdiag_occupied.size() == @board.get_board_size() || player0_rightdiag_occupied.size() == @board.get_board_size() )
+		if (p0_rows.include?(bs) || p0_cols.include?(bs) || p0_ld.size() == bs || p0_rd.size() == bs )
 			winner = 0
-		elsif (player1_rows_occupied.include?(@board.get_board_size()) || player1_cols_occupied.include?(@board.get_board_size()) || player1_leftdiag_occupied.size() == @board.get_board_size() || player1_rightdiag_occupied.size() == @board.get_board_size() )
+		elsif (p1_rows.include?(bs) || p1_cols.include?(bs) || p1_ld.size() == bs || p1_rd.size() == bs )
 			winner = 1		  
 	  else
 	    puts "No winner found"
@@ -111,20 +103,22 @@ class Game
 		winner
 	end
 	
+	
+	
 def update_player_moves_hash
   puts "Updating player_moves_hash"
   keys = (0..@board.get_board_size()-1)
-  player0_hash = {"rows" => nil, "cols" => nil, "left_diag" => nil, "right_diag" => nil}
-  player1_hash = {"rows" => nil, "cols" => nil, "left_diag" => nil, "right_diag" => nil}
-	player0_hash["rows"] = Hash[keys.map {|pkey|[pkey, Array.new() ] }]
-	player0_hash["cols"] = Hash[keys.map {|pkey|[pkey, Array.new() ] }]
-	player0_hash["left_diag"] = Hash[@board.left_diag_positions_array.map {|pkey|[pkey, nil ] }]
-  player0_hash["right_diag"] = Hash[@board.right_diag_positions_array.map {|pkey|[pkey, nil ] }]
+  p0_h = {"rows" => nil, "cols" => nil, "left_diag" => nil, "right_diag" => nil}
+  p1_h = {"rows" => nil, "cols" => nil, "left_diag" => nil, "right_diag" => nil}
+	p0_h["rows"] = Hash[keys.map {|pkey|[pkey, Array.new() ] }]
+	p0_h["cols"] = Hash[keys.map {|pkey|[pkey, Array.new() ] }]
+	p0_h["left_diag"] = Hash[@board.left_diag_positions_array.map {|pkey|[pkey, nil ] }]
+  p0_h["right_diag"] = Hash[@board.right_diag_positions_array.map {|pkey|[pkey, nil ] }]
 
-	player1_hash["rows"] = Hash[keys.map {|pkey|[pkey, Array.new() ] }]
-	player1_hash["cols"] = Hash[keys.map {|pkey|[pkey, Array.new() ] }]
-  player1_hash["left_diag"] = Hash[@board.left_diag_positions_array.map {|pkey|[pkey, nil ] }]
-  player1_hash["right_diag"] = Hash[@board.right_diag_positions_array.map {|pkey|[pkey, nil ] }]
+	p1_h["rows"] = Hash[keys.map {|pkey|[pkey, Array.new() ] }]
+	p1_h["cols"] = Hash[keys.map {|pkey|[pkey, Array.new() ] }]
+  p1_h["left_diag"] = Hash[@board.left_diag_positions_array.map {|pkey|[pkey, nil ] }]
+  p1_h["right_diag"] = Hash[@board.right_diag_positions_array.map {|pkey|[pkey, nil ] }]
 	
 	@board.pos_hash.keys.each do |pos|
 		#print "position = #{pos}\t"
@@ -132,30 +126,30 @@ def update_player_moves_hash
 		case player_index
 		when 0
 		  #print "belongs to #{@players[0].name}\n"
-			player0_hash["rows"][pos[0]] << pos
-			player0_hash["cols"][pos[1]] << pos
-			if(player0_hash["left_diag"].has_key?(pos)) 
-			  player0_hash["left_diag"][pos] = 1
+			p0_h["rows"][pos[0]] << pos
+			p0_h["cols"][pos[1]] << pos
+			if(p0_h["left_diag"].has_key?(pos)) 
+			  p0_h["left_diag"][pos] = 1
 		  end
-		  if(player0_hash["right_diag"].has_key?(pos)) 
-			  player0_hash["right_diag"][pos] = 1
+		  if(p0_h["right_diag"].has_key?(pos)) 
+			  p0_h["right_diag"][pos] = 1
 		  end
 		when 1
 		  #print "belongs to #{@players[1].name}\n"
-			player1_hash["rows"][pos[0]] << pos
-			player1_hash["cols"][pos[1]] << pos
-      if(player1_hash["left_diag"].has_key?(pos)) 
-			  player1_hash["left_diag"][pos] = 1
+			p1_h["rows"][pos[0]] << pos
+			p1_h["cols"][pos[1]] << pos
+      if(p1_h["left_diag"].has_key?(pos)) 
+			  p1_h["left_diag"][pos] = 1
 		  end
-		  if(player1_hash["right_diag"].has_key?(pos)) 
-			  player1_hash["right_diag"][pos] = 1
+		  if(p1_h["right_diag"].has_key?(pos)) 
+			  p1_h["right_diag"][pos] = 1
 		  end		  
 		else
 			#puts "Board position is vacant"
 		end
 	end
-	@players[0].winning_sequences_tracker = player0_hash 
-	@players[1].winning_sequences_tracker = player1_hash
+	@players[0].winning_sequences_tracker = p0_h 
+	@players[1].winning_sequences_tracker = p1_h
 	#puts "#{@players[0].name}'s winning_sequences_tracker = #{@players[0].winning_sequences_tracker}"
 	#puts "#{@players[1].name}'s winning_sequences_tracker = #{@players[1].winning_sequences_tracker}"
 end
