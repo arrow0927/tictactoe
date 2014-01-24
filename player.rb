@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 class Player
-	require_relative 'dbmod'
+	
 	attr_accessor :name, :is_computer, :winning_sequences_tracker
 #winning_sequences_tracker = {"rows"=>{0=>[[0, 0]], 1=>[], 2=>[]}, "cols"=>{0=>[[0, 0]], 1=>[], 2=>[]}}
 

@@ -6,11 +6,11 @@ Variables:
 Game Mode
 board_state
 =end
-require_relative "dbmod"
+
 require_relative "Game"
 require_relative "Player"
 require_relative "Board"
-include Dbmod
+
 #Get user info to configure game
 puts <<PARA
 Hello. My name is Ash I created this game...

@@ -1,5 +1,5 @@
 #!/usr/bin/ruby
-	require_relative 'dbmod'
+	
 	require_relative "Player"
 	require_relative "Board"
   require_relative "Ai"
