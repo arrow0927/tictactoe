@@ -8,6 +8,7 @@ class Player
 		@name = name
 		@is_computer = is_computer
 		@color = color
+		
 	end
 
   # If a row/col/diagonal has 1 or more positions for this player it is a winning sequence

@@ -1,17 +1,36 @@
 
 class Board
-	attr_accessor  :pos_hash
+	attr_accessor  :pos_hash, :left_diag_positions_array, :right_diag_positions_array
 	BOARD_SIZE = 3
 	
 
 def initialize()
 	@pos_hash = initialize_position_hash
-# @pos_hash{"a1"=>{"belongs_to"=>nil}, "a2"=>{"belongs_to"=>nil} }
+  @left_diag_positions_array = get_left_diagonal_positions()
+  @right_diag_positions_array = get_right_diagonal_positions()
 end
 
 def get_board_size()
   BOARD_SIZE
 end
+
+def get_left_diagonal_positions
+  left_diag_positions = Array.new()
+  (0..BOARD_SIZE - 1).each do |i|
+    left_diag_positions << [ i , i ]
+  end
+  left_diag_positions
+end
+
+def get_right_diagonal_positions
+  right_diag_positions = Array.new()
+  limit = get_board_size() -1
+  (0..limit).each do |i|
+    right_diag_positions << [ limit - i  , i ]
+  end
+  right_diag_positions
+end 
+
 	def update_board(choicen_position , current_player_index)
 		#Add choice to positions hash	
 		#puts "@pos_hash before update = #{@pos_hash.inspect }"
@@ -72,14 +91,8 @@ end
 	
 
 
-	def any_vacant_positions_left()
-		vacancies = false
-		@pos_hash.keys.each do |key|
-			if(@pos_hash[key]["belongs_to"].nil?)
-				vacancies = true
-			end
-		end
-		vacancies
+	def get_total_positions_on_Board()
+    BOARD_SIZE * BOARD_SIZE
 	end
 
 	def is_legalpos(postion_arr)
