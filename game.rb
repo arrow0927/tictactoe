@@ -39,11 +39,12 @@ class Game
 				@game_over = true;
 				if !@winner 
 				  puts "\033[101m Game Over! \033[0m"
+				  @board.print_board(@players[0].name, @players[1].name)
 			  else
 			    puts "\033[101m WINNER is #{@players[@winner].name}\033[0m"
+			    @board.print_board(@players[0].name, @players[1].name)
         end
       end
-      @board.print_board(@players[0].name, @players[1].name)
 		end
 	end
 
@@ -79,7 +80,7 @@ class Game
   #   player1_rows_occupied = [0, 0, 2]
   #   player1_cols_occupied = [0, 1, 1]
 	def there_is_a_winner()
-		puts "Inside method to check if there is a winner"
+		#puts "Inside method to check if there is a winner"
 		winner = false
 		
 		player0_rows_occupied = get_row_occupancy_numbers(0)
@@ -90,15 +91,15 @@ class Game
     player0_rightdiag_occupied = get_right_diag_occupancy_numbers(0)
     player1_leftdiag_occupied = get_left_diag_occupancy_numbers(1)
     player1_rightdiag_occupied = get_right_diag_occupancy_numbers(1)
-		puts "player0_rows_occupied = #{player0_rows_occupied}"
-		puts "player0_cols_occupied = #{player0_cols_occupied}"
-		puts "player0_leftdiag_occupied = #{player0_leftdiag_occupied}"
-		puts "player0_rightdiag_occupied = #{player0_rightdiag_occupied}"
-		
-		puts "player1_rows_occupied = #{player1_rows_occupied}"
-		puts "player1_cols_occupied = #{player1_cols_occupied}"
-		puts "player1_leftdiag_occupied = #{player1_leftdiag_occupied}"
-		puts "player1_rightdiag_occupied = #{player1_rightdiag_occupied}"
+		# puts "player0_rows_occupied = #{player0_rows_occupied}"
+		#     puts "player0_cols_occupied = #{player0_cols_occupied}"
+		#     puts "player0_leftdiag_occupied = #{player0_leftdiag_occupied}"
+		#     puts "player0_rightdiag_occupied = #{player0_rightdiag_occupied}"
+		#     
+		#     puts "player1_rows_occupied = #{player1_rows_occupied}"
+		#     puts "player1_cols_occupied = #{player1_cols_occupied}"
+		#     puts "player1_leftdiag_occupied = #{player1_leftdiag_occupied}"
+		#     puts "player1_rightdiag_occupied = #{player1_rightdiag_occupied}"
 		
 		if (player0_rows_occupied.include?(@board.get_board_size()) || player0_cols_occupied.include?(@board.get_board_size()) || player0_leftdiag_occupied.size() == @board.get_board_size() || player0_rightdiag_occupied.size() == @board.get_board_size() )
 			winner = 0
@@ -126,11 +127,11 @@ def update_player_moves_hash
   player1_hash["right_diag"] = Hash[@board.right_diag_positions_array.map {|pkey|[pkey, nil ] }]
 	
 	@board.pos_hash.keys.each do |pos|
-		print "position = #{pos}\t"
+		#print "position = #{pos}\t"
 		player_index = @board.pos_hash[pos]["belongs_to"]
 		case player_index
 		when 0
-		  print "belongs to #{@players[0].name}\n"
+		  #print "belongs to #{@players[0].name}\n"
 			player0_hash["rows"][pos[0]] << pos
 			player0_hash["cols"][pos[1]] << pos
 			if(player0_hash["left_diag"].has_key?(pos)) 
@@ -140,7 +141,7 @@ def update_player_moves_hash
 			  player0_hash["right_diag"][pos] = 1
 		  end
 		when 1
-		  print "belongs to #{@players[1].name}\n"
+		  #print "belongs to #{@players[1].name}\n"
 			player1_hash["rows"][pos[0]] << pos
 			player1_hash["cols"][pos[1]] << pos
       if(player1_hash["left_diag"].has_key?(pos)) 
@@ -150,29 +151,29 @@ def update_player_moves_hash
 			  player1_hash["right_diag"][pos] = 1
 		  end		  
 		else
-			puts "Board position is vacant"
+			#puts "Board position is vacant"
 		end
 	end
 	@players[0].winning_sequences_tracker = player0_hash 
 	@players[1].winning_sequences_tracker = player1_hash
-	puts "#{@players[0].name}'s winning_sequences_tracker = #{@players[0].winning_sequences_tracker}"
-	puts "#{@players[1].name}'s winning_sequences_tracker = #{@players[1].winning_sequences_tracker}"
+	#puts "#{@players[0].name}'s winning_sequences_tracker = #{@players[0].winning_sequences_tracker}"
+	#puts "#{@players[1].name}'s winning_sequences_tracker = #{@players[1].winning_sequences_tracker}"
 end
 
-def initialize_winning_moves
-		wm = [
-			[[0,0],[0,1], [0,2]],
-			[[1,0],[1,1], [1,2]],
-			[[2,0],[2,1], [2,2]],
-			[[0,0],[1,0], [2,0]],
-			[[0,1],[1,1], [2,1]],
-			[[0,2],[1,2], [2,2]],
-			[[0,0],[1,1], [2,2]],
-			[[0,2],[1,1], [2,0]],
-			]
-		puts "Initialized winning moves = #{wm.inspect}"
-		wm
-	end
+# def initialize_winning_moves
+#     wm = [
+#       [[0,0],[0,1], [0,2]],
+#       [[1,0],[1,1], [1,2]],
+#       [[2,0],[2,1], [2,2]],
+#       [[0,0],[1,0], [2,0]],
+#       [[0,1],[1,1], [2,1]],
+#       [[0,2],[1,2], [2,2]],
+#       [[0,0],[1,1], [2,2]],
+#       [[0,2],[1,1], [2,0]],
+#       ]
+#     puts "Initialized winning moves = #{wm.inspect}"
+#     wm
+#   end
 	
   # ash's winning_sequences_tracker = {"rows"=>{0=>[[0, 0], [0, 1], [0, 2]], 1=>[], 2=>[]}, "cols"=>{0=>[[0, 0]], 1=>[[0, 1]], 2=>[[0, 2]]}}
   # punya's winning_sequences_tracker = {"rows"=>{0=>[], 1=>[], 2=>[[2, 1], [2, 2]]}, "cols"=>{0=>[], 1=>[[2, 1]], 2=>[[2, 2]]}}
@@ -180,7 +181,7 @@ def initialize_winning_moves
   def get_row_occupancy_numbers(player_index)
     row_occupancy = Array.new()
     @players[player_index].winning_sequences_tracker["rows"].keys.each do |row|
-      puts "#{@players[player_index].name} is occupying #{@players[player_index].winning_sequences_tracker["rows"][row].size} spots in row #{row}"
+      #puts "#{@players[player_index].name} is occupying #{@players[player_index].winning_sequences_tracker["rows"][row].size} spots in row #{row}"
       row_occupancy[row] = @players[player_index].winning_sequences_tracker["rows"][row].size
     end
     row_occupancy
@@ -189,7 +190,7 @@ def initialize_winning_moves
   def get_col_occupancy_numbers(player_index)
     col_occupancy = Array.new()
     @players[player_index].winning_sequences_tracker["cols"].keys.each do |col|
-      puts "#{@players[player_index].name} is occupying #{@players[player_index].winning_sequences_tracker["cols"][col].size} spots in col #{col}"
+      #puts "#{@players[player_index].name} is occupying #{@players[player_index].winning_sequences_tracker["cols"][col].size} spots in col #{col}"
       col_occupancy[col] = @players[player_index].winning_sequences_tracker["cols"][col].size
     end
     col_occupancy
@@ -200,10 +201,10 @@ def initialize_winning_moves
    @players[player_index].winning_sequences_tracker["left_diag"].keys.each do |key|
      if(@players[player_index].winning_sequences_tracker["left_diag"][key] == 1)
        left_diag_occupancy << key
-       puts "inside get_left_diag_occupancy_numbers() added #{key.inspect} to left_diag_occupancy to make it #{left_diag_occupancy.inspect}"
+       #puts "inside get_left_diag_occupancy_numbers() added #{key.inspect} to left_diag_occupancy to make it #{left_diag_occupancy.inspect}"
      end
    end
-   puts "#{@players[player_index].name} is occupying #{left_diag_occupancy.size} spots in left diagonal"
+   #puts "#{@players[player_index].name} is occupying #{left_diag_occupancy.size} spots in left diagonal"
     left_diag_occupancy
   end
   
@@ -214,7 +215,7 @@ def initialize_winning_moves
          right_diag_occupancy << key
        end
      end
-      puts "#{@players[player_index].name} is occupying #{right_diag_occupancy.size} spots in right diagonal"
+      #puts "#{@players[player_index].name} is occupying #{right_diag_occupancy.size} spots in right diagonal"
       right_diag_occupancy
   end
   
@@ -230,19 +231,19 @@ def initialize_winning_moves
   
   def get_all_positions_occupied_by_player(player_index)
     unique_positions = Array.new()
-    puts "@players[player_index].winning_sequences_tracker = #{@players[player_index].winning_sequences_tracker}"
+   # puts "@players[player_index].winning_sequences_tracker = #{@players[player_index].winning_sequences_tracker}"
    @players[player_index].winning_sequences_tracker.keys.each do |key|
-     print "\nouter key = #{key}\n"
+     #print "\nouter key = #{key}\n"
       if(key=="left_diag")
         unique_positions = unique_positions | get_left_diag_occupancy_numbers(player_index)
       elsif(key=="right_diag")
         unique_positions = unique_positions | get_right_diag_occupancy_numbers(player_index)
       else
         @players[player_index].winning_sequences_tracker[key].keys.each do |el|
-          print "\tinner key = #{el}"
+          #print "\tinner key = #{el}"
           #puts "concatenating #{unique_positions.inspect} and \n #{@players[player_index].winning_sequences_tracker[key][el].inspect}"
           unique_positions = unique_positions | @players[player_index].winning_sequences_tracker[key][el]
-          print "\tunique positions = #{unique_positions}"
+          #print "\tunique positions = #{unique_positions}"
         end #inner loop
      end #if/else
    end #outer loop
