@@ -17,7 +17,7 @@ class Game
 			@players[1] = Player.new(options[:player2_name], false)
 		else
 			@players[1] = Player.new("Computer", true)
-			@ai = Ai.new(@players, self) # send a copy of game object to ai
+			@ai = Ai.new(@players, self, @board) # send a copy of game object to ai
 		end
 		@current_player_index = 1
 		@game_over = false
@@ -30,9 +30,8 @@ class Game
 		while(@game_over == false)
 			@board.print_board(@players[0].name, @players[1].name)
 			chosen_position = next_move() #Prompts player for position, checks input from player, returns it ----
-			@board.update_board(chosen_position, @current_player_index ) #updates positions in board@board.
-			update_player_moves_hash() #updates the winning_sequences_tracker variables within all players 
-			@winner = there_is_a_winner()
+			@board.update_board(chosen_position, @current_player_index ) #[0,0] -> chosen position
+			@winner = get_winner()
 			vacant_pos = num_vacant_positions_left() 
 			puts "num_vacant_positions_left = #{vacant_pos}"
 			if(@winner || ( vacant_pos == 0) )
@@ -49,206 +48,203 @@ class Game
 	end
 
 
-	def next_move()
-		choice_arr = nil
-		#first find which player's turn it is
-		@current_player_index == 0 ?  @current_player_index = 1 : @current_player_index = 0
-		got_choice = false
-    
-    #this section if its the human's turn - ask human for choice
-    if(!@players[@current_player_index].is_computer)
-		  while(!got_choice)
-  			puts "#{@players[@current_player_index].name} your turn...."	
-  			puts "enter the position. For example enter: 0,0"
-  			choice_arr = STDIN.gets().chomp.split(",").map{|str| str.to_i}
-  			#Check if its a valid position and if that position wasn't already taken----
-  			if(@board.is_legalpos(choice_arr)) 
-  				got_choice = true
-  			end
-  		end
-		else #this section if its the computer's turn - ai decides choice
-		puts "Computer has chosen........."
-		ai.get_optimal_position()
-		choice_arr = ai.choose_position()
-		end
-		choice_arr
-	end
-
-	# This method tells us how many positions are occupied by a player in any given row, in any given column, in any given digonal
-	# When 3 positions are occupied it means that the entire row is occupied by this player and he is the winner
-  # p0_rows = [3, 0, 0] --> player 0 is winner because row[0] has 3 positions occupied
-  #   p0_cols = [1, 1, 1]
-  #   p1_rows = [0, 0, 2]
-  #   p1_cols = [0, 1, 1]
-	def there_is_a_winner()
-		#puts "Inside method to check if there is a winner"
-		winner = false
-		
-		p0_rows = get_row_occupancy_numbers(0)
-		p0_cols = get_col_occupancy_numbers(0)
-		p1_rows = get_row_occupancy_numbers(1)
-		p1_cols = get_col_occupancy_numbers(1)
-    p0_ld = get_left_diag_occupancy_numbers(0)
-    p0_rd = get_right_diag_occupancy_numbers(0)
-    p1_ld = get_left_diag_occupancy_numbers(1)
-    p1_rd = get_right_diag_occupancy_numbers(1)
-    bs = @board.get_board_size()
-		
-		if (p0_rows.include?(bs) || p0_cols.include?(bs) || p0_ld.size() == bs || p0_rd.size() == bs )
-			winner = 0
-		elsif (p1_rows.include?(bs) || p1_cols.include?(bs) || p1_ld.size() == bs || p1_rd.size() == bs )
-			winner = 1		  
-	  else
-	    puts "No winner found"
-		end 
-		winner
-	end
-	
-	
-	
-def update_player_moves_hash
-  puts "Updating player_moves_hash"
-  keys = (0..@board.get_board_size()-1)
-  p0_h = {"rows" => nil, "cols" => nil, "left_diag" => nil, "right_diag" => nil}
-  p1_h = {"rows" => nil, "cols" => nil, "left_diag" => nil, "right_diag" => nil}
-	p0_h["rows"] = Hash[keys.map {|pkey|[pkey, Array.new() ] }]
-	p0_h["cols"] = Hash[keys.map {|pkey|[pkey, Array.new() ] }]
-	p0_h["left_diag"] = Hash[@board.left_diag_positions_array.map {|pkey|[pkey, nil ] }]
-  p0_h["right_diag"] = Hash[@board.right_diag_positions_array.map {|pkey|[pkey, nil ] }]
-
-	p1_h["rows"] = Hash[keys.map {|pkey|[pkey, Array.new() ] }]
-	p1_h["cols"] = Hash[keys.map {|pkey|[pkey, Array.new() ] }]
-  p1_h["left_diag"] = Hash[@board.left_diag_positions_array.map {|pkey|[pkey, nil ] }]
-  p1_h["right_diag"] = Hash[@board.right_diag_positions_array.map {|pkey|[pkey, nil ] }]
-	
-	@board.pos_hash.keys.each do |pos|
-		#print "position = #{pos}\t"
-		player_index = @board.pos_hash[pos]["belongs_to"]
-		case player_index
-		when 0
-		  #print "belongs to #{@players[0].name}\n"
-			p0_h["rows"][pos[0]] << pos
-			p0_h["cols"][pos[1]] << pos
-			if(p0_h["left_diag"].has_key?(pos)) 
-			  p0_h["left_diag"][pos] = 1
-		  end
-		  if(p0_h["right_diag"].has_key?(pos)) 
-			  p0_h["right_diag"][pos] = 1
-		  end
-		when 1
-		  #print "belongs to #{@players[1].name}\n"
-			p1_h["rows"][pos[0]] << pos
-			p1_h["cols"][pos[1]] << pos
-      if(p1_h["left_diag"].has_key?(pos)) 
-			  p1_h["left_diag"][pos] = 1
-		  end
-		  if(p1_h["right_diag"].has_key?(pos)) 
-			  p1_h["right_diag"][pos] = 1
-		  end		  
-		else
-			#puts "Board position is vacant"
-		end
-	end
-	@players[0].winning_sequences_tracker = p0_h 
-	@players[1].winning_sequences_tracker = p1_h
-	puts "#{@players[0].name}'s winning_sequences_tracker = #{@players[0].winning_sequences_tracker}"
-	puts "#{@players[1].name}'s winning_sequences_tracker = #{@players[1].winning_sequences_tracker}"
-end
 
 
 	
-  # ash's winning_sequences_tracker = {"rows"=>{0=>[[0, 0], [0, 1], [0, 2]], 1=>[], 2=>[]}, "cols"=>{0=>[[0, 0]], 1=>[[0, 1]], 2=>[[0, 2]]}}
-  # der's winning_sequences_tracker = {"rows"=>{0=>[], 1=>[], 2=>[[2, 1], [2, 2]]}, "cols"=>{0=>[], 1=>[[2, 1]], 2=>[[2, 2]]}}
+	
+	
+	
+
+
   
-  def get_row_occupancy_numbers(player_index)
-    row_occupancy = Array.new()
-    @players[player_index].winning_sequences_tracker["rows"].keys.each do |row|
-      #puts "#{@players[player_index].name} is occupying #{@players[player_index].winning_sequences_tracker["rows"][row].size} spots in row #{row}"
-      row_occupancy[row] = @players[player_index].winning_sequences_tracker["rows"][row].size
-    end
-    #returns an array [0,3,1] where index of the array is the row number and the element is the number of positions in that row that belong to this player
-    row_occupancy
-  end 	
-
-  def get_col_occupancy_numbers(player_index)
-    col_occupancy = Array.new()
-    @players[player_index].winning_sequences_tracker["cols"].keys.each do |col|
-      #puts "#{@players[player_index].name} is occupying #{@players[player_index].winning_sequences_tracker["cols"][col].size} spots in col #{col}"
-      col_occupancy[col] = @players[player_index].winning_sequences_tracker["cols"][col].size
-    end
-    #returns an array [0,3,1] where index of the array is the column number and the element is the number of positions in that column that belong to this player
-    col_occupancy 
-	end
-	
-	def get_left_diag_occupancy_numbers(player_index)
-	 left_diag_occupancy = Array.new()
-   @players[player_index].winning_sequences_tracker["left_diag"].keys.each do |key|
-     if(@players[player_index].winning_sequences_tracker["left_diag"][key] == 1)
-       left_diag_occupancy << key
-       #puts "inside get_left_diag_occupancy_numbers() added #{key.inspect} to left_diag_occupancy to make it #{left_diag_occupancy.inspect}"
-     end
-   end
-   #puts "#{@players[player_index].name} is occupying #{left_diag_occupancy.size} spots in left diagonal"
-   # returns this -> left_diag_occupancy = [[0, 0], [1, 1], [2, 2]] ie all the positions in the left diagonal that are occupied by this player
-    left_diag_occupancy
-  end
   
-  def get_right_diag_occupancy_numbers(player_index)
-	  right_diag_occupancy = Array.new()
-     @players[player_index].winning_sequences_tracker["right_diag"].keys.each do |key|
-       if(@players[player_index].winning_sequences_tracker["right_diag"][key] == 1)
-         right_diag_occupancy << key
-       end
-     end
-      #puts "#{@players[player_index].name} is occupying #{right_diag_occupancy.size} spots in right diagonal"
-      # returns this -> right_diag_occupancy = [[2, 0], [1, 1] ] ie all the positions in the right diagonal that are occupied by this player
-      right_diag_occupancy
-  end
-  
- 
+ #TO DO--------
   
   def get_all_positions_occupied_by_player(player_index)
-    unique_positions = Array.new()
-   # puts "@players[player_index].winning_sequences_tracker = #{@players[player_index].winning_sequences_tracker}"
-   @players[player_index].winning_sequences_tracker.keys.each do |key|
-     #print "\nouter key = #{key}\n"
-      if(key=="left_diag")
-        unique_positions = unique_positions | get_left_diag_occupancy_numbers(player_index)
-      elsif(key=="right_diag")
-        unique_positions = unique_positions | get_right_diag_occupancy_numbers(player_index)
-      else
-        @players[player_index].winning_sequences_tracker[key].keys.each do |el|
-          #print "\tinner key = #{el}"
-          #puts "concatenating #{unique_positions.inspect} and \n #{@players[player_index].winning_sequences_tracker[key][el].inspect}"
-          unique_positions = unique_positions | @players[player_index].winning_sequences_tracker[key][el]
-          #print "\tunique positions = #{unique_positions}"
-        end #inner loop
-     end #if/else
-   end #outer loop
-    puts "outside loop unique_positions for player #{@players[player_index].name} = #{unique_positions.inspect}"
-    puts "outside loop unique_positions size for player #{@players[player_index].name} = #{unique_positions.size}"
-    unique_positions
+   
   end
   
  
-  
+  #TO DO--------
   def num_vacant_positions_left()
-    p0 = get_all_positions_occupied_by_player(0).size()
-    p1 = get_all_positions_occupied_by_player(1).size()
-    tot = @board.get_total_positions_on_Board()
-    puts "All positions occupied by player #{@players[0].name} are #{p0.inspect}"
-    puts "All positions occupied by player #{@players[1].name} are #{p1.inspect}"
-    puts "Total board positions are #{tot}"
-    
-    tot - ( p0 +  p1)
+    puts "Total board positions are #{@board.total_positions}"
+    puts "Total occupied positions = #{@board.occupied_positions}"
+    @board.total_positions - @board.occupied_positions
   end
 
-	def stop_game()
-		puts "Stop game invoked"
-		exit
-	end
 
+
+#=================================================================================
+private
+#TO DO--------
+def next_move()
+	choice_arr = nil
+	#first find which player's turn it is
+	@current_player_index == 0 ?  @current_player_index = 1 : @current_player_index = 0
+	got_choice = false
+  
+  #this section if its the human's turn - ask human for choice
+  if(!@players[@current_player_index].is_computer)
+	  while(!got_choice)
+			puts "#{@players[@current_player_index].name} your turn...."	
+			puts "enter the position. For example enter: 0,0"
+			choice_arr = STDIN.gets().chomp.split(",").map{|str| str.to_i}
+			#Check if its a valid position and if that position wasn't already taken----
+			if(@board.is_legalpos(choice_arr)) 
+				got_choice = true
+			end
+		end
+	else #this section if its the computer's turn - ai decides choice **********TO DO *****************
+	  @ai.update_board_positions_with_ranks()
+    #choice_arr =  @ai.choose_position()
+	  choice_arr = [2,2]
+	end
+	choice_arr #[0,0]
+end
 	
+	#TO DO--------
+# if winner ? returns the player index else returns false
+	def get_winner()
+		puts "Inside method to check if there is a winner"
+	  winner = false
+	  #rows
+	  winner = check_rows_for_winner()
+	  if(!winner) #cols
+      winner = check_cols_for_winner()
+    end
+    # if(!winner)
+    #      winner = check_left_diag_for_winner()
+    #    end
+    #    if(!winner)
+    #      winner = check_right_diag_for_winner()
+    #    end
+    winner
+	end
 	
+	#=====================================================================================
+private
+
+#TO DO --TO OPTIMIZE AND CONSOLIDATE INTO 1 METHOD
+  def check_rows_for_winner()
+     	p0count = 0
+   		p1count = 0
+   		winner = false
+       (0..@board.boardsize - 1).each do |row|
+         (0..@board.boardsize - 1).each do |col|
+           player = @board.pos_array[row][col].belongs_to
+             if(player == 0)
+               p0count = p0count + 1
+               puts "[#{row}][#{col}] is occupied by player[0]"
+             elsif(player == 1)
+               p1count = p1count + 1
+               puts "[#{row}][#{col}] is occupied by player[1]"
+             else
+               puts "[#{row}][#{col}] is empty"
+             end
+         end #col
+         if(p0count == 3)
+           puts "Winner 0 in row = #{row}"
+           winner = 0
+           break
+         elsif (p1count == 3)
+            puts "Winner 1 in row = #{row}"
+           winner = 1
+           break
+         else
+           puts "No winner in row = #{row}"
+           winner = false
+           p0count = 0
+       		 p1count = 0
+         end
+       end #row
+       winner
+   end
+
+
+ def check_cols_for_winner()
+   puts "Inside method to check cols for a winner"
+   	p0count = 0
+ 		p1count = 0
+ 		winner = false
+     (0..@board.boardsize - 1).each do |col|
+       (0..@board.boardsize - 1).each do |row|
+         player = @board.pos_array[row][col].belongs_to
+           if(player == 0)
+             p0count = p0count + 1
+             puts "[#{row}][#{col}] is occupied by player[0]"
+           elsif(player == 1)
+             p1count = p1count + 1
+             puts "[#{row}][#{col}] is occupied by player[1]"
+           else
+             puts "[#{row}][#{col}] is empty"
+           end
+       end #col
+       if(p0count == 3)
+         puts "Winner 0 in col = #{col}"
+         winner = 0
+         break
+       elsif (p1count == 3)
+          puts "Winner 1 in col = #{col}"
+         winner = 1
+         break
+       else
+         puts "No winner in col = #{col}"
+         winner = false
+         p0count = 0
+     		 p1count = 0
+       end
+     end #row
+     winner
+ end
+ 
+ def check_left_diag_for_winner()
+   
+ end
+
+ # def check_rows_or_cols_for_winner(mode)
+ #    puts "Inside method to check #{mode} for a winner"
+ #      p0count = 0
+ #      p1count = 0
+ #      winner = false
+ #      puts "Mode = #{mode}"
+ #      (0..@board.boardsize - 1).each do |row|
+ #        (0..@board.boardsize - 1).each do |col|
+ #          if(mode == "rows") 
+ #            outer = row
+ #            inner = col
+ #          else
+ #            outer = col
+ #            inner = row
+ #          end
+ #          puts "outer = [#{outer}] inner = [#{inner}]"   
+ #          player = @board.pos_array[outer][inner].belongs_to
+ #          if(player == 0)
+ #           p0count = p0count + 1
+ #           puts "[#{outer}][#{inner}] is occupied by player[0]"
+ #          elsif(player == 1)
+ #           p1count = p1count + 1
+ #           puts "[#{outer}][#{inner}] is occupied by player[1]"
+ #          else
+ #           puts "[#{outer}][#{inner}] is empty"
+ #          end
+ #        end #col
+ #        if(p0count == 3)
+ #         puts "Winner 0 in #{mode} = #{outer}"
+ #         winner = 0
+ #         break
+ #       elsif (p1count == 3)
+ #         puts "Winner  1 in #{mode} = #{outer}"
+ #         winner = 1
+ #         break
+ #       else
+ #         puts "No winner in #{mode} = #{outer}"
+ #         winner = false
+ #         p0count = 0
+ #         p1count = 0
+ #      end
+ #     end #row
+ #      winner
+ #  end
+
 
 end

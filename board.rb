@@ -1,114 +1,66 @@
-
 class Board
-	attr_accessor  :pos_hash, :left_diag_positions_array, :right_diag_positions_array
-	BOARD_SIZE = 3
+    require_relative 'position'
+    
+	attr_accessor  :pos_array, :left_diag_positions_array, :right_diag_positions_array, :total_positions, :occupied_positions
+	unless (const_defined?(:BOARDSIZE))
+      BOARDSIZE = 3
+    end
 	
 
 def initialize()
-	@pos_hash = initialize_position_hash
-  @left_diag_positions_array = get_left_diagonal_positions()
-  @right_diag_positions_array = get_right_diagonal_positions()
+	@pos_array = initialize_pos_array()
+	@total_positions = BOARDSIZE * BOARDSIZE
+	@occupied_positions = 0
+	#print_position_array()
 end
 
-def get_board_size()
-  BOARD_SIZE
-end
-
-def get_left_diagonal_positions
-  left_diag_positions = Array.new()
-  (0..BOARD_SIZE - 1).each do |i|
-    left_diag_positions << [ i , i ]
+def print_board(player0Name, player1Name)
+	puts "*" * 60
+	print "\t \033[31m#{player0Name} is red\033[0m \t\t"
+	print "\033[34m#{player1Name} is blue\033[0m \n"
+	puts "*" * 60
+	(0..BOARDSIZE - 1).each do |row|
+     print_row(row)
   end
-  left_diag_positions
+	puts ""
+	puts "*" * 60
+	puts ""
 end
 
-def get_right_diagonal_positions
-  right_diag_positions = Array.new()
-  limit = get_board_size() -1
-  (0..limit).each do |i|
-    right_diag_positions << [ limit - i  , i ]
-  end
-  right_diag_positions
-end 
+def boardsize()
+  BOARDSIZE
+end
 
+
+#choicen_position = [0,0]
 	def update_board(choicen_position , current_player_index)
-		#Add choice to positions hash	
-		#puts "@pos_hash before update = #{@pos_hash.inspect }"
-		puts "Chosen position = #{choicen_position.inspect}"
-		@pos_hash[choicen_position]["belongs_to"] = current_player_index
-		#puts "@pos_hash after update = #{@pos_hash.inspect }"
+		@pos_array[choicen_position[0]][choicen_position[1]].belongs_to = current_player_index
+		@occupied_positions += 1
+		puts "Board updated...\n[#{choicen_position[0]}] [#{choicen_position[1]}] belongs_to  #{@pos_array[choicen_position[0]][choicen_position[1]].belongs_to}"
 	end
-
-#belongs_to points to the value of the index in the @players array in Game
-	def initialize_position_hash
-		rows = (0..BOARD_SIZE-1).to_a
-		cols = (0..BOARD_SIZE-1).to_a
-		pos_keys = rows.product(cols) #[[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2]]
-    pos_keys_hash = Hash[pos_keys.map {|pkey|[pkey, Hash["belongs_to" => nil] ] }]
-		puts "Initialized Board Positions: #{pos_keys_hash.inspect}"
-		pos_keys_hash
-	end
-
-	
-
-	def print_board(player0Name, player1Name)
-		puts "*" * 60
-		print "\t \033[31m#{player0Name} is red\033[0m \t\t"
-		print "\033[34m#{player1Name} is blue\033[0m \n"
-		puts "*" * 60
-		(0..2).each do |row|
-	     print_row(row)
-	  end
-		puts ""
-		puts "*" * 60
-		puts ""
-	end
-	
-  def print_row(row)
-		(0..2).each do |col|
-			pos_arr = [row,col]
-			#puts "pos_arr = #{pos_arr}"
-			cp = colored_position(pos_arr)
-			print "\t"
-			print cp
-			print "\t"
-		end	
-		puts ""
-	end
-	
-	def colored_position(position)
-		colored_pos = nil
-		if( @pos_hash[position]["belongs_to"] == 0)		#if position belongs to player[0] it will be colored red
-			colored_pos = "\033[31m#{position}\033[0m"
-		elsif ( @pos_hash[position]["belongs_to"] == 1)#if position belongs to player[1]] it will be colored blue
-			colored_pos = "\033[34m#{position}\033[0m"
-		else		#if position is empty it will be in green
-			colored_pos = position
-		end
-	colored_pos		
-	end
-
-	
-
-
+#TO DO--------
 	def get_total_positions_on_Board()
-    BOARD_SIZE * BOARD_SIZE
+    t = BOARD_SIZE * BOARD_SIZE
 	end
-
-	def is_legalpos(postion_arr)
+#TO DO--------
+	def is_legalpos(choice_arr)
+	  #puts "Evaluating choice #{choice_arr} to see if its legal....."
 		legal = false
-	  if(!postion_arr.kind_of?(Array) && postion_arr.size > 2)
-		    puts "pos_array = #{pos_array} is not array or too long"
+	  if(!choice_arr.kind_of?(Array) && choice_arr.size > 2)
+		    puts "INPUT TO  is_legalpos IS INVALID = #{pos_array} >> not array or too long"
     else    
 			#first make sure that 
-			@pos_hash.keys.each do|key|	
-				if(key == postion_arr) #the choice has to be a legal position 
-					if( (@pos_hash[key]["belongs_to"]).nil? ) # and it has to be available
-						legal = true
-					end
-				end
-			end
-		end
+			  @pos_array.each do|row|
+  			    row.each do|pos_obj|	
+    				  if(choice_arr == pos_obj.coordinates)
+    				      #puts "Choice is in the right format.....checking if its valid position"
+      					  if( pos_obj.belongs_to.nil? ) # and it has to be available
+        						legal = true
+        					end
+      				end
+    			end
+  		  end
+		  end
 		if (legal) 
 			puts "\t\tyour move was legal"
 		else
@@ -116,4 +68,54 @@ end
 		end
 		legal
 	end
+	#=================================================================================
+	private
+	
+	#belongs_to points to the value of the index in the @players array in Game
+  	def initialize_pos_array
+  		parr = Array.new(BOARDSIZE)
+  		(0..BOARDSIZE - 1).each do |row|
+  		  parr[row] = Array.new(BOARDSIZE)
+  		  (0..BOARDSIZE - 1).each do |col|
+  		    parr[row][col] = Position.new([row,col])
+  		    #puts "Adding position to (#{parr[row][col]}) = #{(parr[row][col]).inspect}"
+  		  end
+		  end
+		  #puts "#{parr.inspect}"
+      parr
+  	end
+
+    def print_position_array()
+            (0..BOARDSIZE - 1).each do |row|
+              (0..BOARDSIZE - 1).each do |col|
+                print "@pos_array[#{row.to_i}][#{col.to_i}] = #{@pos_array[row][col]}"
+              end
+              puts "============================end of row #{row}============================="
+            end
+        end
+
+
+	  def colored_position(position)
+  		colored_pos = nil
+  		if( position.belongs_to == 0)		#if position belongs to player[0] it will be colored red
+  			colored_pos = "\033[31m#{position.coordinates}\033[0m"
+  		elsif ( position.belongs_to == 1)#if position belongs to player[1]] it will be colored blue
+  			colored_pos = "\033[34m#{position.coordinates}\033[0m"
+  		else		#if position is empty it will be in green
+  			colored_pos = position.coordinates
+  		end
+  	colored_pos		
+  	end
+	
+	  def print_row(row)
+  		(0..BOARDSIZE - 1).each do |col|
+  			cp = colored_position(pos_array[row][col])
+  			print "\t"
+  			print cp
+  			print "\t"
+  		end	
+  		puts ""
+  	end
+	
+	
 end

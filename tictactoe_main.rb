@@ -1,15 +1,5 @@
 #!/usr/bin/ruby
-=begin
-Tic Tac Toe Game
-The player can choose to play the game between 2 people or between a player and a computer
-Variables:
-Game Mode
-board_state
-=end
-
 require_relative "Game"
-require_relative "Player"
-require_relative "Board"
 
 #Get user info to configure game
 puts <<PARA
@@ -45,8 +35,6 @@ PARA3
 	options[:player2_name] = STDIN.gets().chomp
 end
 g = Game.new(options)
-#Dbmod::print_game_state(g)
-
 g.play_game()
 
 
