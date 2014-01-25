@@ -4,8 +4,8 @@ class Position
   def initialize(coord)
     @coordinates = coord 
     @belongs_to = nil
-    @rank0 = nil
-    @rank1 = nil
+    @rank0 = 9
+    @rank1 = 9
   end
   
   

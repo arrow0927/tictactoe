@@ -15,15 +15,15 @@ def initialize()
 end
 
 def print_board(player0Name, player1Name)
-	puts "*" * 60
+	puts "*" * 120
 	print "\t \033[31m#{player0Name} is red\033[0m \t\t"
 	print "\033[34m#{player1Name} is blue\033[0m \n"
-	puts "*" * 60
+	puts "*" * 120
 	(0..BOARDSIZE - 1).each do |row|
      print_row(row)
   end
 	puts ""
-	puts "*" * 60
+	puts "*" * 120
 	puts ""
 end
 
@@ -31,18 +31,28 @@ def boardsize()
   BOARDSIZE
 end
 
+def print_ranks()
+  (0..BOARDSIZE - 1).each do |row|
+    (0..BOARDSIZE - 1).each do |col|
+      print "Position = #{@pos_array[row][col].coordinates}>>"
+      print "player[0] rank= #{(@pos_array[row][col]).rank0}\t"
+      print "player[1] rank = #{(@pos_array[row][col]).rank1}\n"
+    end
+  end
+end
 
 #choicen_position = [0,0]
 	def update_board(choicen_position , current_player_index)
 		@pos_array[choicen_position[0]][choicen_position[1]].belongs_to = current_player_index
+		@pos_array[choicen_position[0]][choicen_position[1]].rank0 = 0
+		@pos_array[choicen_position[0]][choicen_position[1]].rank1 = 0		
 		@occupied_positions += 1
 		puts "Board updated...\n[#{choicen_position[0]}] [#{choicen_position[1]}] belongs_to  #{@pos_array[choicen_position[0]][choicen_position[1]].belongs_to}"
+		puts "Board updated...\n[#{choicen_position[0]}] [#{choicen_position[1]}] rank0  #{@pos_array[choicen_position[0]][choicen_position[1]].rank0}"
+		puts "Board updated...\n[#{choicen_position[0]}] [#{choicen_position[1]}] rank1  #{@pos_array[choicen_position[0]][choicen_position[1]].rank1}"
 	end
-#TO DO--------
-	def get_total_positions_on_Board()
-    t = BOARD_SIZE * BOARD_SIZE
-	end
-#TO DO--------
+
+
 	def is_legalpos(choice_arr)
 	  #puts "Evaluating choice #{choice_arr} to see if its legal....."
 		legal = false
@@ -98,11 +108,11 @@ end
 	  def colored_position(position)
   		colored_pos = nil
   		if( position.belongs_to == 0)		#if position belongs to player[0] it will be colored red
-  			colored_pos = "\033[31m#{position.coordinates}\033[0m"
+  			colored_pos = "\033[31m#{position.coordinates}r0=#{position.rank0},r1=#{position.rank1}\033[0m"
   		elsif ( position.belongs_to == 1)#if position belongs to player[1]] it will be colored blue
-  			colored_pos = "\033[34m#{position.coordinates}\033[0m"
+  			colored_pos = "\033[34m#{position.coordinates}r0=#{position.rank0},r1=#{position.rank1}\033[0m"
   		else		#if position is empty it will be in green
-  			colored_pos = position.coordinates
+  			colored_pos = "#{position.coordinates}r0=#{position.rank0},r1=#{position.rank1}"
   		end
   	colored_pos		
   	end
@@ -112,7 +122,7 @@ end
   			cp = colored_position(pos_array[row][col])
   			print "\t"
   			print cp
-  			print "\t"
+  			print "\t\t"
   		end	
   		puts ""
   	end
