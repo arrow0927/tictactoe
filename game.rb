@@ -78,8 +78,8 @@ def next_move()
 			end
 		end
 	else #this section if its the computer's turn - ai decides choice **********TO DO *****************
-    #choice_arr =  @ai.choose_position()
-	  choice_arr = [2,2]
+    choice_arr =  @ai.choose_position()
+    puts "Computer chose #{choice_arr.inspect}"
 	end
 	choice_arr # in format [0,0]
 end

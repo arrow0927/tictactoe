@@ -187,12 +187,68 @@ end
      end #loop
   end
   
-  
-  
+  # Ranking hash constructed by AI ranks_r0= {1=>[], 2=>[[0, 1], [0, 2], [1, 0], [1, 1], [2, 0], [2, 2]], 3=>[[1, 2], [2, 1]], "other"=>[]}
+  #   Ranking hash constructed by AI ranks_r1= {1=>[], 2=>[], 3=>[[0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2]], "other"=>[]}
+  #   Empty Positions [[0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2]]
   
  #TO DO--------
  def choose_position()
- 
+  choice = Array.new()
+  #Construct hash where keys are number of moves
+  #Opponents moves ranked
+  ranks_r0 = {1=>Array.new(), 2=>Array.new(), 3=>Array.new(), "other"=>Array.new() }
+  #Computer's moves ranked
+  ranks_r1 = {1=>Array.new(), 2=>Array.new(), 3=>Array.new(), "other"=>Array.new() }
+  empty_positions = Array.new()
+  @board.pos_array.each do |row|
+    row.each do |pos|
+      if(pos.belongs_to.nil?)
+        (empty_positions << pos.coordinates) 
+        (ranks_r0[1] << pos.coordinates) if(pos.rank0 == 1) 
+        (ranks_r1[1] << pos.coordinates) if(pos.rank1 == 1)
+        (ranks_r0[2] << pos.coordinates) if(pos.rank0 == 2)
+        (ranks_r1[2] << pos.coordinates) if(pos.rank1 == 2)
+        (ranks_r0[3] << pos.coordinates) if(pos.rank0 == 3)
+        (ranks_r1[3] << pos.coordinates) if(pos.rank1 == 3)
+        (ranks_r0["other"] << pos.coordinates) if(pos.rank0 > 3)
+        (ranks_r1["other"] << pos.coordinates) if(pos.rank1 > 3)          
+      end
+    end
+  end
+  
+  puts "==========="
+  puts "==========="
+    puts "Ranking hash constructed by AI ranks_r0= #{ranks_r0.inspect}"  
+    puts "Ranking hash constructed by AI ranks_r1= #{ranks_r1.inspect}"  
+    puts "Empty Positions #{empty_positions.inspect}"
+  puts "==========="
+  puts "==========="
+   
+   choice_hash = {1=>Array.new(), 2=>Array.new(), 3=>Array.new(), 4=>Array.new()}
+   i=1
+   while(i<=3)
+     choice_hash[i] << ranks_r1[i] if(ranks_r1[i].any?)
+     choice_hash[i] << ranks_r0[i] if(ranks_r0[i].any?)  
+     i += 1
+   end
+   
+   puts "==========="
+   puts "==========="
+   puts "choice_hash = #{choice_hash.inspect}"
+    puts "==========="
+    puts "===========" 
+   choice << choice_hash[1] if(choice_hash[1].any?)
+   choice << choice_hash[2] if(choice_hash[2].any?)
+   choice << choice_hash[3] if(choice_hash[3].any?)
+   choice = choice.join(",").split(",").map{|x| x.to_i }
+  puts "choice = #{choice.inspect}"
+  if(!choice.any? || choice.nil?)
+    choice = empty_positions[rand(empty_positions.size)]
+  end
+  
+  choice = choice.each_slice(2).to_a
+  puts "choice[0] = #{choice[0]}"
+  choice[0]
  end
  
  
