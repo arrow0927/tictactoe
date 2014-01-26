@@ -265,51 +265,5 @@ private
   end
   
   
-#TO DO --TO OPTIMIZE AND CONSOLIDATE INTO 1 METHOD
- # def check_rows_or_cols_for_winner(mode)
- #    puts "Inside method to check #{mode} for a winner"
- #      p0count = 0
- #      p1count = 0
- #      winner = false
- #      puts "Mode = #{mode}"
- #      (0..@board.boardsize - 1).each do |row|
- #        (0..@board.boardsize - 1).each do |col|
- #          if(mode == "rows") 
- #            outer = row
- #            inner = col
- #          else
- #            outer = col
- #            inner = row
- #          end
- #          puts "outer = [#{outer}] inner = [#{inner}]"   
- #          player = @board.pos_array[outer][inner].belongs_to
- #          if(player == 0)
- #           p0count = p0count + 1
- #           puts "[#{outer}][#{inner}] is occupied by player[0]"
- #          elsif(player == 1)
- #           p1count = p1count + 1
- #           puts "[#{outer}][#{inner}] is occupied by player[1]"
- #          else
- #           puts "[#{outer}][#{inner}] is empty"
- #          end
- #        end #col
- #        if(p0count == 3)
- #         puts "Winner 0 in #{mode} = #{outer}"
- #         winner = 0
- #         break
- #       elsif (p1count == 3)
- #         puts "Winner  1 in #{mode} = #{outer}"
- #         winner = 1
- #         break
- #       else
- #         puts "No winner in #{mode} = #{outer}"
- #         winner = false
- #         p0count = 0
- #         p1count = 0
- #      end
- #     end #row
- #      winner
- #  end
-
 
 end
