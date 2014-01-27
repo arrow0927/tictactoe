@@ -88,8 +88,10 @@ end
     #Following methods will provide parameters necessary to update the ranks while they
     #also check for a winner
     bool_flags = Array.new(4)
-	  bool_flags[0] = scan_rows()
-    bool_flags[1] = scan_cols()
+	  #bool_flags[0] = scan_rows()
+	  bool_flags[0] = scan("rows")
+    #bool_flags[1] = scan_cols()
+    bool_flags[1] = scan("cols")
     bool_flags[2] = scan_left_diag()
     bool_flags[3] = scan_right_diag()
     if(bool_flags.include?(0))
@@ -105,71 +107,70 @@ end
 	#=====================================================================================
 private
 
-  def scan_rows()
-   		winner = false
-       (0..@board.boardsize - 1).each do |row|
-         	p0count = 0
-        	p1count = 0
-        	row_positions = Array.new()
-         (0..@board.boardsize - 1).each do |col|
-           player = @board.pos_array[row][col].belongs_to
-             if(player == 0)
-               p0count = p0count + 1
-               row_positions[col] = 0
-             elsif(player == 1)
-               p1count = p1count + 1
-               row_positions[col] = 1
-             else
-               row_positions[col] = nil
-             end
-         end #col
-         if(p0count == 3)
-           winner = 0
-           break
-         elsif(p1count == 3)
-           winner = 1
-           break
-         else # We only update ranks if there is no winner. If there is a winner we dont need to update the ranks
-           winner = false
-           @ai.update_row_col_ranks(row_positions, row, p0count, p1count, "row" )
+def scan(mode)
+  winner = false
+   (0..@board.boardsize - 1).each do |outer|
+     	p0count = 0
+    	p1count = 0
+    	positions_array = Array.new()
+     (0..@board.boardsize - 1).each do |inner|
+      if(mode == "rows")
+         row = outer
+         col = inner
+      elsif(mode == "cols")
+         row = inner
+         col = outer
+      elsif(mode == "left_diag")
+         row = nil
+         col = nil
+      else
+         row = nil
+         col = nil
+      end #if/else
+       
+      player = @board.pos_array[row][col].belongs_to
+       if(player == 0)
+          p0count = p0count + 1
+          if (mode == "rows") 
+           positions_array[col] = 0 
+          elsif (mode == "cols")
+           positions_array[row] = 0 
+          else
+            
+          end  
+       elsif (player == 1)
+        p1count = p1count + 1
+        if(mode == "rows") 
+          positions_array[col] = 1
+        elsif (mode == "cols")
+          positions_array[row] = 1
+        else
+
+        end
+      else
+         if(mode == "rows") 
+           positions_array[col] = nil
+         elsif (mode == "cols")
+           positions_array[row] = nil
+         else
          end
-       end #row
-       winner
-   end
+       end #if/else
+     end #inner
+     if(p0count == 3)
+       winner = 0
+       break
+     elsif(p1count == 3)
+       winner = 1
+       break
+     else # We only update ranks if there is no winner. If there is a winner we dont need to update the ranks
+       winner = false
+       if(mode == "rows") then @ai.update_row_col_ranks(positions_array, outer, p0count, p1count, "row" ) end
+       if(mode == "cols") then @ai.update_row_col_ranks(positions_array, outer, p0count, p1count, "col" ) end
+     end #if/else
+   end #outer
+   winner  
+end
 
-
- def scan_cols()
- 		winner = false
-     (0..@board.boardsize - 1).each do |col|
-       	p0count = 0
-      	p1count = 0
-      	col_positions = Array.new()
-       (0..@board.boardsize - 1).each do |row|
-         player = @board.pos_array[row][col].belongs_to
-           if(player == 0)
-             p0count = p0count + 1
-             col_positions[row] = 0
-           elsif(player == 1)
-             p1count = p1count + 1
-             col_positions[row] = 1
-           else
-             col_positions[row] = nil
-           end
-       end #row
-      
-       if(p0count == 3)
-         winner = 0
-         break
-       elsif (p1count == 3)
-         winner = 1
-         break
-       else
-         winner = false
-         @ai.update_row_col_ranks(col_positions, col, p0count, p1count, "col" )
-       end
-     end #col
-     winner
- end
  
  def scan_left_diag()
     	p0count = 0
