@@ -141,7 +141,7 @@ private
          else # We only update ranks if there is no winner. If there is a winner we dont need to update the ranks
            #puts "No winner in row = #{row}"
            winner = false
-           @ai.update_row_ranks(row_positions, row, p0count, p1count)
+           @ai.update_row_col_ranks(row_positions, row, p0count, p1count, "row" )
          end
        end #row
        winner
@@ -182,8 +182,7 @@ private
        else
          #puts "No winner in col = #{col}"
          winner = false
-         #update ranks in this col-------TO DO
-         @ai.update_col_ranks(col_positions, col, p0count, p1count)
+         @ai.update_row_col_ranks(col_positions, col, p0count, p1count, "col" )
        end
      end #col
      winner
@@ -221,7 +220,8 @@ private
         #puts "No winner in left diagonal"
         winner = false
         #update ranks in left diagonal-------TO DO
-        @ai.update_leftdiag_ranks(left_diag_positions, p0count, p1count)
+        #@ai.update_leftdiag_ranks(left_diag_positions, p0count, p1count)
+        @ai.update_diag_ranks(left_diag_positions, p0count, p1count, "left_diag")
       end
       winner
  end
@@ -259,7 +259,8 @@ private
          #puts "No winner in right diagonal"
          winner = false
          #update ranks in right diagonal-------TO DO
-         @ai.update_rightdiag_ranks(right_diag_positions, p0count, p1count)
+         #@ai.update_rightdiag_ranks(right_diag_positions, p0count, p1count)
+         @ai.update_diag_ranks(right_diag_positions, p0count, p1count, "right_diag")
        end
        winner
   end

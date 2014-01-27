@@ -8,9 +8,7 @@ class Ai
   require_relative 'ai'
     
   attr_accessor :players, :game, :pos_rank_hash
-  
-  
-  #TO DO--------
+
   def initialize(players, game, board)
     @players = players
     @game = game
@@ -21,181 +19,137 @@ class Ai
     puts "AI is activated... "
   end
   
-  #method only invoked if there is at least 1 position unoccupied in that row
-  #only empty positions get ranks
- def update_row_ranks(row_positions, row, p0count, p1count)
-  puts "row_positions = #{row_positions}"
-  puts "row = #{row}"
-  puts "p0count = #{p0count}"
-  puts "p1count = #{p1count}"
-  row_positions.each_with_index do |val, i|
-      puts "Inside update_row_ranks row2, = #{row} #{i} "
-      pos = @board.pos_array[row][i]
-      if(row_positions[i].nil?)
-            #Rule
-            if(p0count == 0 && p1count == 0 )
-              pos.rank0 < 3 ? pos.rank0 = evaluate_rank_of_position(row,i, 0, pos.rank0, 3, "row") : pos.rank0 = 3 
-              pos.rank1 < 3 ? pos.rank1 = evaluate_rank_of_position(row,i, 1, pos.rank1, 3, "row") : pos.rank1 = 3 
-            elsif(p0count == 0 && p1count == 1 )
-              pos.rank0 < 9 ? pos.rank0 = evaluate_rank_of_position(row,i, 0, pos.rank0, 9, "row") : pos.rank0 = 9 
-              pos.rank1 < 2 ? pos.rank1 = evaluate_rank_of_position(row,i, 1, pos.rank1, 2, "row") : pos.rank1 = 2
-            elsif(p0count == 1 && p1count == 0 )
-              pos.rank0 < 2 ? pos.rank0 = evaluate_rank_of_position(row,i, 0, pos.rank0, 2, "row") : pos.rank0 = 2 
-              pos.rank1 < 9 ? pos.rank1 = evaluate_rank_of_position(row,i, 1, pos.rank1, 9, "row") : pos.rank1 = 9
-            elsif(p0count == 1 && p1count == 1 )
-              pos.rank0 < 9 ? pos.rank0 = evaluate_rank_of_position(row,i, 0, pos.rank0, 9, "row") : pos.rank0 = 9 
-              pos.rank1 < 9 ? pos.rank1 = evaluate_rank_of_position(row,i, 1, pos.rank1, 9, "row") : pos.rank1 = 9
-            elsif(p0count == 0 && p1count == 2 )
-              pos.rank0 < 9 ? pos.rank0 = evaluate_rank_of_position(row,i, 0, pos.rank0, 9, "row") : pos.rank0 = 9 
-              pos.rank1 == 1 ? (puts "Rank unchanged from #{pos.rank1} ") : pos.rank1 = 1
-            elsif(p0count == 2 && p1count == 0 )
-              pos.rank0 == 1 ? (puts "Rank unchanged from #{pos.rank0} ") : pos.rank0 = 1 
-              pos.rank1 < 9 ? pos.rank1 = evaluate_rank_of_position(row,i, 1, pos.rank1, 9, "row") : pos.rank1 = 9
-            elsif(p0count == 1 && p1count == 2 )
-              pos.rank0 < 9 ? pos.rank0 = evaluate_rank_of_position(row,i, 0, pos.rank0, 9, "row") : pos.rank0 = 9 
-              pos.rank1 < 9 ? pos.rank1 = evaluate_rank_of_position(row,i, 1, pos.rank1, 9, "row") : pos.rank1 = 9
-            else
-              pos.rank0 < 9 ? pos.rank0 = evaluate_rank_of_position(row,i, 0, pos.rank0, 9, "row") : pos.rank0 = 9 
-              pos.rank1 < 9 ? pos.rank1 = evaluate_rank_of_position(row,i, 1, pos.rank1, 9, "row") : pos.rank1 = 9
-            end    
-          end
-    end #loop
- end
  
- 
- #method only invoked if there is at least 1 position unoccupied in that col
- #only empty positions get ranks
-def update_col_ranks(col_positions, col, p0count, p1count)
- puts "col_positions = #{col_positions}"
- puts "col = #{col}"
- puts "p0count = #{p0count}"
- puts "p1count = #{p1count}"
- col_positions.each_with_index do |val, i|
-     puts "Inside update_col_ranks, = #{i} #{col} "
-     pos = @board.pos_array[i][col]
-     if(col_positions[i].nil?)
-           #Rule
-           if(p0count == 0 && p1count == 0 )
-             pos.rank0 < 3 ? pos.rank0 = evaluate_rank_of_position(i,col, 0, pos.rank0, 3, "col") : pos.rank0 = 3 
-             pos.rank1 < 3 ? pos.rank1 = evaluate_rank_of_position(i,col, 1, pos.rank1, 3, "col") : pos.rank1 = 3 
-           elsif(p0count == 0 && p1count == 1 )
-             pos.rank0 < 9 ? pos.rank0 = evaluate_rank_of_position(i,col, 0, pos.rank0, 9, "col") : pos.rank0 = 9 
-             pos.rank1 < 2 ? pos.rank1 = evaluate_rank_of_position(i,col, 1, pos.rank1, 2, "col") : pos.rank1 = 2
-           elsif(p0count == 1 && p1count == 0 )
-             pos.rank0 < 2 ? pos.rank0 = evaluate_rank_of_position(i,col, 0, pos.rank0, 2, "col") : pos.rank0 = 2 
-             pos.rank1 < 9 ? pos.rank1 = evaluate_rank_of_position(i,col, 1, pos.rank1, 9, "col") : pos.rank1 = 9
-           elsif(p0count == 1 && p1count == 1 )
-             pos.rank0 < 9 ? pos.rank0 = evaluate_rank_of_position(i,col, 0, pos.rank0, 9, "col") : pos.rank0 = 9 
-             pos.rank1 < 9 ? pos.rank1 = evaluate_rank_of_position(i,col, 1, pos.rank1, 9, "col") : pos.rank1 = 9
-           elsif(p0count == 0 && p1count == 2 )
-             pos.rank0 < 9 ? pos.rank0 = evaluate_rank_of_position(i,col, 0, pos.rank0, 9, "col") : pos.rank0 = 9 
-             pos.rank1 == 1 ? (puts "Rank unchanged from #{pos.rank1} ") : pos.rank1 = 1
-           elsif(p0count == 2 && p1count == 0 )
-             pos.rank0 == 1 ? (puts "Rank unchanged from #{pos.rank0} ") : pos.rank0 = 1 
-             pos.rank1 < 9 ? pos.rank1 = evaluate_rank_of_position(i,col, 1, pos.rank1, 9, "col") : pos.rank1 = 9
-           elsif(p0count == 1 && p1count == 2 )
-             pos.rank0 < 9 ? pos.rank0 = evaluate_rank_of_position(i,col, 0, pos.rank0, 9, "col") : pos.rank0 = 9 
-             pos.rank1 < 9 ? pos.rank1 = evaluate_rank_of_position(i,col, 1, pos.rank1, 9, "col") : pos.rank1 = 9
-           else
-             pos.rank0 < 9 ? pos.rank0 = evaluate_rank_of_position(i,col, 0, pos.rank0, 9, "col") : pos.rank0 = 9 
-             pos.rank1 < 9 ? pos.rank1 = evaluate_rank_of_position(i,col, 1, pos.rank1, 9, "col") : pos.rank1 = 9
-           end    
-         end
-   end #loop
-end
-
-
-
-
- #method only invoked if there is at least 1 empty position in the diagonal
- #only empty positions get ranks
-def update_leftdiag_ranks(left_diag_positions, p0count, p1count)
- puts "left_diag_positions = #{left_diag_positions}"
- puts "p0count = #{p0count}"
- puts "p1count = #{p1count}"
- (0..@board.boardsize - 1).each do |i|
-     puts "Inside update_leftdiag_ranks [#{i}][#{i}] "
-     pos = @board.pos_array[i][i]
-     if(left_diag_positions[i].nil?)
-           #Rule
-            if(p0count == 0 && p1count == 0 )
-               pos.rank0 < 3 ? pos.rank0 = evaluate_rank_of_position(i,i, 0, pos.rank0, 3, "left_diag") : pos.rank0 = 3 
-               pos.rank1 < 3 ? pos.rank1 = evaluate_rank_of_position(i,i, 1, pos.rank1, 3, "left_diag") : pos.rank1 = 3 
-             elsif(p0count == 0 && p1count == 1 )
-               pos.rank0 < 9 ? pos.rank0 = evaluate_rank_of_position(i,i, 0, pos.rank0, 9, "left_diag") : pos.rank0 = 9 
-               pos.rank1 < 2 ? pos.rank1 = evaluate_rank_of_position(i,i, 1, pos.rank1, 2, "left_diag") : pos.rank1 = 2
-             elsif(p0count == 1 && p1count == 0 )
-               pos.rank0 < 2 ? pos.rank0 = evaluate_rank_of_position(i,i, 0, pos.rank0, 2, "left_diag") : pos.rank0 = 2 
-               pos.rank1 < 9 ? pos.rank1 = evaluate_rank_of_position(i,i, 1, pos.rank1, 9, "left_diag") : pos.rank1 = 9
-             elsif(p0count == 1 && p1count == 1 )
-               pos.rank0 < 9 ? pos.rank0 = evaluate_rank_of_position(i,i, 0, pos.rank0, 9, "left_diag") : pos.rank0 = 9 
-               pos.rank1 < 9 ? pos.rank1 = evaluate_rank_of_position(i,i, 1, pos.rank1, 9, "left_diag") : pos.rank1 = 9
-             elsif(p0count == 0 && p1count == 2 )
-               pos.rank0 < 9 ? pos.rank0 = evaluate_rank_of_position(i,i, 0, pos.rank0, 9, "left_diag") : pos.rank0 = 9 
-               pos.rank1 == 1 ? (puts "Rank unchanged from #{pos.rank1} ") : pos.rank1 = 1
-             elsif(p0count == 2 && p1count == 0 )
-               pos.rank0 == 1 ? (puts "Rank unchanged from #{pos.rank0} ") : pos.rank0 = 1 
-               pos.rank1 < 9 ? pos.rank1 = evaluate_rank_of_position(i,i, 1, pos.rank1, 9, "left_diag") : pos.rank1 = 9
-             elsif(p0count == 1 && p1count == 2 )
-               pos.rank0 < 9 ? pos.rank0 = evaluate_rank_of_position(i,i, 0, pos.rank0, 9, "left_diag") : pos.rank0 = 9 
-               pos.rank1 < 9 ? pos.rank1 = evaluate_rank_of_position(i,i, 1, pos.rank1, 9, "left_diag") : pos.rank1 = 9
-             else
-               pos.rank0 < 9 ? pos.rank0 = evaluate_rank_of_position(i,i, 0, pos.rank0, 9, "left_diag") : pos.rank0 = 9 
-               pos.rank1 < 9 ? pos.rank1 = evaluate_rank_of_position(i,i, 1, pos.rank1, 9, "left_diag") : pos.rank1 = 9
-             end    
-           end
-   end #loop
-end
+#=================================================================================================
+def update_row_col_ranks(positions_array, row_or_col, p0count, p1count, mode )
+  r0_ranks = {"00"=>3, "01"=>9, "10"=>2, "11"=>9, "02"=> 9, "20"=>1, "12"=>9, "21"=>9}
+  r1_ranks = {"00"=>3, "01"=>2, "10"=>9, "11"=>9, "02"=> 1, "20"=>9, "12"=>9, "21"=>9}
   
-  
-  
-  
-  #method only invoked if there is at least 1 empty position in the diagonal
-   #only empty positions get ranks
-  def update_rightdiag_ranks(right_diag_positions, p0count, p1count)
-   puts "right_diag_positions = #{right_diag_positions}"
-   puts "p0count = #{p0count}"
-   puts "p1count = #{p1count}"
-   r =  ((@board.boardsize - 1)..0)
-    (r.first).downto(r.last).each do |i|
-       puts "Inside update_rightdiag_ranks [#{i}][#{(@board.boardsize - 1) - i}] "
-       pos = @board.pos_array[i][(@board.boardsize - 1)-i] 
-       if(right_diag_positions[i].nil?)
-             #Rule
-             if(p0count == 0 && p1count == 0 )
-               pos.rank0 < 3 ? (puts "Rank unchanged from #{pos.rank0} ") : pos.rank0 = 3 
-               pos.rank1 < 3 ? (puts "Rank unchanged from #{pos.rank1} ") : pos.rank1 = 3 
-             elsif(p0count == 0 && p1count == 1 )
-               pos.rank0 < 9 ? (puts "Rank unchanged from #{pos.rank0} ") : pos.rank0 = 9 
-               pos.rank1 < 2 ? (puts "Rank unchanged from #{pos.rank1} ") : pos.rank1 = 2
-             elsif(p0count == 1 && p1count == 0 )
-               pos.rank0 < 2 ? (puts "Rank unchanged from #{pos.rank0} ") : pos.rank0 = 2 
-               pos.rank1 < 9 ? (puts "Rank unchanged from #{pos.rank1} ") : pos.rank1 = 9
-             elsif(p0count == 1 && p1count == 1 )
-               pos.rank0 < 9 ? (puts "Rank unchanged from #{pos.rank0} ") : pos.rank0 = 9 
-               pos.rank1 < 9 ? (puts "Rank unchanged from #{pos.rank1} ") : pos.rank1 = 9
-             elsif(p0count == 0 && p1count == 2 )
-               pos.rank0 < 9 ? (puts "Rank unchanged from #{pos.rank0} ") : pos.rank0 = 9 
-               pos.rank1 == 1 ? (puts "Rank unchanged from #{pos.rank1} ") : pos.rank1 = 1
-             elsif(p0count == 2 && p1count == 0 )
-               pos.rank0 == 1 ? (puts "Rank unchanged from #{pos.rank0} ") : pos.rank0 = 1 
-               pos.rank1 < 9 ? (puts "Rank unchanged from #{pos.rank1} ") : pos.rank1 = 9
-             elsif(p0count == 1 && p1count == 2 )
-               pos.rank0 < 9 ? (puts "Rank unchanged from #{pos.rank0} ") : pos.rank0 = 9 
-               pos.rank1 < 9 ? (puts "Rank unchanged from #{pos.rank1} ") : pos.rank1 = 9
-             else
-               pos.rank0 < 9 ? (puts "Rank unchanged from #{pos.rank0} ") : pos.rank0 = 9 
-               pos.rank1 < 9 ? (puts "Rank unchanged from #{pos.rank1} ") : pos.rank1 = 9
-             end    
-           end
-     end #loop
+  positions_array.each_with_index do |elem, i |
+  case mode
+  when "row"
+    left = row_or_col
+    right = i
+    pos = @board.pos_array[left][right]
+  when "col"
+    left = i
+    right = row_or_col
+    pos = @board.pos_array[left][right]
+  else
+    puts "incorrect mode"
   end
   
-  # Ranking hash constructed by AI ranks_r0= {1=>[], 2=>[[0, 1], [0, 2], [1, 0], [1, 1], [2, 0], [2, 2]], 3=>[[1, 2], [2, 1]], "other"=>[]}
-  #   Ranking hash constructed by AI ranks_r1= {1=>[], 2=>[], 3=>[[0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2]], "other"=>[]}
-  #   Empty Positions [[0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2]]
+    if(positions_array[i].nil?)
+        #Rules
+      val = "#{p0count}#{p1count}" 
+      if(val == "02")
+         pos.rank0 < r0_ranks[val] ? pos.rank0 = evaluate_rank_of_position(left, right, 0, pos.rank0, r0_ranks[val], mode) : pos.rank0 = r0_ranks[val] 
+         pos.rank1 == r1_ranks[val] ? (puts "Rank unchanged from #{pos.rank1} ") : pos.rank1 = r1_ranks[val]
+      elsif(val == "20" )
+        pos.rank0 == r0_ranks[val] ? (puts "Rank unchanged from #{pos.rank0} ") : pos.rank0 = r0_ranks[val] 
+        pos.rank1 < r1_ranks[val] ? pos.rank1 = evaluate_rank_of_position(left, right, 1, pos.rank1, r1_ranks[val], mode) : pos.rank1 = r1_ranks[val]
+      else  
+        pos.rank0 < r0_ranks[val] ? pos.rank0 = evaluate_rank_of_position(left ,right, 0, pos.rank0, r0_ranks[val], mode) : pos.rank0 = r0_ranks[val] 
+        pos.rank1 < r1_ranks[val] ? pos.rank1 = evaluate_rank_of_position(left ,right, 1, pos.rank1, r1_ranks[val], mode) : pos.rank1 = r1_ranks[val]
+      end    
+    end
+  end #loop
+end
+
+
+
+
+# #=================================================================================================
+#  #method only invoked if there is at least 1 empty position in the diagonal
+#  #only empty positions get ranks
+# def update_leftdiag_ranks(left_diag_positions, p0count, p1count)
+#  puts "left_diag_positions = #{left_diag_positions}"
+#  puts "p0count = #{p0count}"
+#  puts "p1count = #{p1count}"
+#  (0..@board.boardsize - 1).each do |i|
+#      puts "Inside update_leftdiag_ranks [#{i}][#{i}] "
+#      pos = @board.pos_array[i][i]
+#      if(left_diag_positions[i].nil?)
+#            #Rule
+#             if(p0count == 0 && p1count == 0 )
+#                pos.rank0 < 3 ? pos.rank0 = evaluate_rank_of_position(i,i, 0, pos.rank0, 3, "left_diag") : pos.rank0 = 3 
+#                pos.rank1 < 3 ? pos.rank1 = evaluate_rank_of_position(i,i, 1, pos.rank1, 3, "left_diag") : pos.rank1 = 3 
+#              elsif(p0count == 0 && p1count == 1 )
+#                pos.rank0 < 9 ? pos.rank0 = evaluate_rank_of_position(i,i, 0, pos.rank0, 9, "left_diag") : pos.rank0 = 9 
+#                pos.rank1 < 2 ? pos.rank1 = evaluate_rank_of_position(i,i, 1, pos.rank1, 2, "left_diag") : pos.rank1 = 2
+#              elsif(p0count == 1 && p1count == 0 )
+#                pos.rank0 < 2 ? pos.rank0 = evaluate_rank_of_position(i,i, 0, pos.rank0, 2, "left_diag") : pos.rank0 = 2 
+#                pos.rank1 < 9 ? pos.rank1 = evaluate_rank_of_position(i,i, 1, pos.rank1, 9, "left_diag") : pos.rank1 = 9
+#              elsif(p0count == 1 && p1count == 1 )
+#                pos.rank0 < 9 ? pos.rank0 = evaluate_rank_of_position(i,i, 0, pos.rank0, 9, "left_diag") : pos.rank0 = 9 
+#                pos.rank1 < 9 ? pos.rank1 = evaluate_rank_of_position(i,i, 1, pos.rank1, 9, "left_diag") : pos.rank1 = 9
+#              elsif(p0count == 0 && p1count == 2 )
+#                pos.rank0 < 9 ? pos.rank0 = evaluate_rank_of_position(i,i, 0, pos.rank0, 9, "left_diag") : pos.rank0 = 9 
+#                pos.rank1 == 1 ? (puts "Rank unchanged from #{pos.rank1} ") : pos.rank1 = 1
+#              elsif(p0count == 2 && p1count == 0 )
+#                pos.rank0 == 1 ? (puts "Rank unchanged from #{pos.rank0} ") : pos.rank0 = 1 
+#                pos.rank1 < 9 ? pos.rank1 = evaluate_rank_of_position(i,i, 1, pos.rank1, 9, "left_diag") : pos.rank1 = 9
+#              elsif(p0count == 1 && p1count == 2 )
+#                pos.rank0 < 9 ? pos.rank0 = evaluate_rank_of_position(i,i, 0, pos.rank0, 9, "left_diag") : pos.rank0 = 9 
+#                pos.rank1 < 9 ? pos.rank1 = evaluate_rank_of_position(i,i, 1, pos.rank1, 9, "left_diag") : pos.rank1 = 9
+#              else
+#                pos.rank0 < 9 ? pos.rank0 = evaluate_rank_of_position(i,i, 0, pos.rank0, 9, "left_diag") : pos.rank0 = 9 
+#                pos.rank1 < 9 ? pos.rank1 = evaluate_rank_of_position(i,i, 1, pos.rank1, 9, "left_diag") : pos.rank1 = 9
+#              end    
+#            end
+#    end #loop
+# end
+#   
+#   
+#   
+#   
+#   #method only invoked if there is at least 1 empty position in the diagonal
+#       #only empty positions get ranks
+#      def update_rightdiag_ranks(right_diag_positions, p0count, p1count)
+#       puts "right_diag_positions = #{right_diag_positions}"
+#       puts "p0count = #{p0count}"
+#       puts "p1count = #{p1count}"
+#       r =  ((@board.boardsize - 1)..0)
+#        (r.first).downto(r.last).each do |i|
+#           puts "Inside update_rightdiag_ranks [#{i}][#{(@board.boardsize - 1) - i}] "
+#           pos = @board.pos_array[i][(@board.boardsize - 1)-i] 
+#           if(right_diag_positions[i].nil?)
+#                 #Rule
+#                 if(p0count == 0 && p1count == 0 )
+#                   pos.rank0 < 3 ? (puts "Rank unchanged from #{pos.rank0} ") : pos.rank0 = 3 
+#                   pos.rank1 < 3 ? (puts "Rank unchanged from #{pos.rank1} ") : pos.rank1 = 3 
+#                 elsif(p0count == 0 && p1count == 1 )
+#                   pos.rank0 < 9 ? (puts "Rank unchanged from #{pos.rank0} ") : pos.rank0 = 9 
+#                   pos.rank1 < 2 ? (puts "Rank unchanged from #{pos.rank1} ") : pos.rank1 = 2
+#                 elsif(p0count == 1 && p1count == 0 )
+#                   pos.rank0 < 2 ? (puts "Rank unchanged from #{pos.rank0} ") : pos.rank0 = 2 
+#                   pos.rank1 < 9 ? (puts "Rank unchanged from #{pos.rank1} ") : pos.rank1 = 9
+#                 elsif(p0count == 1 && p1count == 1 )
+#                   pos.rank0 < 9 ? (puts "Rank unchanged from #{pos.rank0} ") : pos.rank0 = 9 
+#                   pos.rank1 < 9 ? (puts "Rank unchanged from #{pos.rank1} ") : pos.rank1 = 9
+#                 elsif(p0count == 0 && p1count == 2 )
+#                   pos.rank0 < 9 ? (puts "Rank unchanged from #{pos.rank0} ") : pos.rank0 = 9 
+#                   pos.rank1 == 1 ? (puts "Rank unchanged from #{pos.rank1} ") : pos.rank1 = 1
+#                 elsif(p0count == 2 && p1count == 0 )
+#                   pos.rank0 == 1 ? (puts "Rank unchanged from #{pos.rank0} ") : pos.rank0 = 1 
+#                   pos.rank1 < 9 ? (puts "Rank unchanged from #{pos.rank1} ") : pos.rank1 = 9
+#                 elsif(p0count == 1 && p1count == 2 )
+#                   pos.rank0 < 9 ? (puts "Rank unchanged from #{pos.rank0} ") : pos.rank0 = 9 
+#                   pos.rank1 < 9 ? (puts "Rank unchanged from #{pos.rank1} ") : pos.rank1 = 9
+#                 else
+#                   pos.rank0 < 9 ? (puts "Rank unchanged from #{pos.rank0} ") : pos.rank0 = 9 
+#                   pos.rank1 < 9 ? (puts "Rank unchanged from #{pos.rank1} ") : pos.rank1 = 9
+#                 end    
+#               end
+#         end #loop
+#      end
+#   
+#   # Ranking hash constructed by AI ranks_r0= {1=>[], 2=>[[0, 1], [0, 2], [1, 0], [1, 1], [2, 0], [2, 2]], 3=>[[1, 2], [2, 1]], "other"=>[]}
+#   #   Ranking hash constructed by AI ranks_r1= {1=>[], 2=>[], 3=>[[0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2]], "other"=>[]}
+#   #   Empty Positions [[0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2]]
   #Precondition = This position must be unoccupied for it to be ranked     
   def evaluate_rank_of_position(row,col, player_index, old_rank, new_rank, sending_function)
+    puts "Evaluating rank of position #{row},#{col}, old_rank = #{old_rank}, new rank = #{new_rank}, sending function = #{sending_function}-------------------"
     lowest_rank = new_rank
 
     ranks = {"row_rank"=>9, "col_rank"=>9,"left_diag_rank"=>9, "right_diag_rank"=>9 }
@@ -222,9 +176,12 @@ end
              lowest_rank = ranks[key]
            end
          end #loop
-    else #if sending function is right_diag -> evaluate col and row
+    else #if sending function is left_diag or right_diag -> evaluate col and row
        ranks["row_rank"] = evaluate_column(row, col, player_index)
        ranks["col_rank"] = evaluate_row(row, col, player_index)
+       if(row == col) then ranks["left_diag_rank"] = evaluate_left_diag(row, col, player_index) end
+       if([[2,0], [1,1], [0,2]].include?([row,col])) then ranks["right_diag_rank"] = evaluate_right_diag(row, col, player_index) end
+
        ranks.keys.each do |key|
          puts "ranks[key] = #{ranks[key]} lowest_rank = #{lowest_rank}"
          if(ranks[key] < lowest_rank)
@@ -232,9 +189,53 @@ end
          end
        end #loop
     end #ifelse
-  puts "reevaluated rank for [#{row}][#{col}] from #{old_rank} to #{lowest_rank}"
+  puts "reevaluated rank for [#{row}][#{col}] from #{old_rank} to #{lowest_rank}------------------"
   lowest_rank
   end
+ 
+ 
+ def update_diag_ranks(diag_array, p0count, p1count, mode)
+  puts "Inside update_diag_ranks-------------------------------"
+  puts "mode = #{mode}"
+   lim = (@board.boardsize - 1)
+   iter_range = (0..lim).to_a
+   if(mode == "right_diag") then  iter_range = iter_range.reverse end
+   r0_ranks = {"00"=>3, "01"=>9, "10"=>2, "11"=>9, "02"=> 9, "20"=>1, "12"=>9, "21"=>9}
+   r1_ranks = {"00"=>3, "01"=>2, "10"=>9, "11"=>9, "02"=> 1, "20"=>9, "12"=>9, "21"=>9}
+   puts "Iterating over #{iter_range.inspect}"
+  iter_range.each do |i|
+   if(mode == "right_diag") 
+     row = i
+     col = lim - i
+     pos = @board.pos_array[row][col]
+     puts "Evaluating position = #{pos.coordinates}"
+   else
+     row = i
+     col = i
+     pos = @board.pos_array[row][col]
+     puts "Evaluating position = #{pos.coordinates}"
+   end
+   if(diag_array[i].nil?)   
+       #Rules
+     val = "#{p0count}#{p1count}" 
+     if(val == "02")
+        pos.rank0 < r0_ranks[val] ? pos.rank0 = evaluate_rank_of_position(row, col, 0, pos.rank0, r0_ranks[val], mode) : pos.rank0 = r0_ranks[val] 
+        pos.rank1 == r1_ranks[val] ? (puts "Rank unchanged from #{pos.rank1} ") : pos.rank1 = r1_ranks[val]
+     elsif(val == "20" )
+       pos.rank0 == r0_ranks[val] ? (puts "Rank unchanged from #{pos.rank0} ") : pos.rank0 = r0_ranks[val] 
+       pos.rank1 < r1_ranks[val] ? pos.rank1 = evaluate_rank_of_position(row, col, 1, pos.rank1, r1_ranks[val], mode) : pos.rank1 = r1_ranks[val]
+     else  
+       pos.rank0 < r0_ranks[val] ? pos.rank0 = evaluate_rank_of_position(row ,col, 0, pos.rank0, r0_ranks[val], mode) : pos.rank0 = r0_ranks[val] 
+       pos.rank1 < r1_ranks[val] ? pos.rank1 = evaluate_rank_of_position(row ,col, 1, pos.rank1, r1_ranks[val], mode) : pos.rank1 = r1_ranks[val]
+     end    
+   end #if
+   end #loop
+   puts "exiting update_diag_ranks-------------------------------"
+  end
+ 
+
+ 
+ 
  
  
    #Precondition = This position must be unoccupied for it to be ranked     
