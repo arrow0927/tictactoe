@@ -117,15 +117,9 @@ def scan(mode)
       if(mode == "rows")
          row = outer
          col = inner
-      elsif(mode == "cols")
+      else
          row = inner
          col = outer
-      elsif(mode == "left_diag")
-         row = nil
-         col = nil
-      else
-         row = nil
-         col = nil
       end #if/else
        
       player = @board.pos_array[row][col].belongs_to
@@ -156,6 +150,8 @@ def scan(mode)
          end
        end #if/else
      end #inner
+     
+     
      if(p0count == 3)
        winner = 0
        break
