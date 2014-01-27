@@ -31,9 +31,7 @@ class Game
 			chosen_position = next_move() #Prompts player for position, checks input from player, returns it ----
 			@board.update_board(chosen_position, @current_player_index ) #[0,0] -> chosen position
 			@winner = get_winner_and_update_ranks()
-			#@board.print_ranks()
 			vacant_pos = num_vacant_positions_left() 
-			puts "num_vacant_positions_left = #{vacant_pos}"
 			if(@winner || ( vacant_pos == 0) )
 				@game_over = true;
 				if !@winner 
@@ -50,8 +48,6 @@ class Game
 
 
   def num_vacant_positions_left()
-    puts "Total board positions are #{@board.total_positions}"
-    puts "Total occupied positions = #{@board.occupied_positions}"
     @board.total_positions - @board.occupied_positions
   end
 
@@ -59,7 +55,7 @@ class Game
 
 #=================================================================================
 private
-#TO DO--------
+
 def next_move()
 	choice_arr = nil
 	#first find which player's turn it is
@@ -87,7 +83,7 @@ end
 
 # if winner ? returns the player index else returns false
 	def get_winner_and_update_ranks()
-		puts "Inside method to check if there is a winner"
+		
 	  winner = false
     #Following methods will provide parameters necessary to update the ranks while they
     #also check for a winner
@@ -120,26 +116,20 @@ private
              if(player == 0)
                p0count = p0count + 1
                row_positions[col] = 0
-               #puts "[#{row}][#{col}] is occupied by player[0]"
              elsif(player == 1)
                p1count = p1count + 1
                row_positions[col] = 1
-               #puts "[#{row}][#{col}] is occupied by player[1]"
              else
-               #puts "[#{row}][#{col}] is empty"
                row_positions[col] = nil
              end
          end #col
          if(p0count == 3)
-           #puts "Winner 0 in row = #{row}"
            winner = 0
            break
          elsif(p1count == 3)
-            #puts "Winner 1 in row = #{row}"
            winner = 1
            break
          else # We only update ranks if there is no winner. If there is a winner we dont need to update the ranks
-           #puts "No winner in row = #{row}"
            winner = false
            @ai.update_row_col_ranks(row_positions, row, p0count, p1count, "row" )
          end
@@ -149,7 +139,6 @@ private
 
 
  def scan_cols()
-   #0,2puts "Inside method to check cols for a winner"
  		winner = false
      (0..@board.boardsize - 1).each do |col|
        	p0count = 0
@@ -160,27 +149,21 @@ private
            if(player == 0)
              p0count = p0count + 1
              col_positions[row] = 0
-             #puts "[#{row}][#{col}] is occupied by player[0]"
            elsif(player == 1)
              p1count = p1count + 1
              col_positions[row] = 1
-             #puts "[#{row}][#{col}] is occupied by player[1]"
            else
-             #puts "[#{row}][#{col}] is empty"
              col_positions[row] = nil
            end
        end #row
       
        if(p0count == 3)
-         #puts "Winner 0 in col = #{col}"
          winner = 0
          break
        elsif (p1count == 3)
-          #puts "Winner 1 in col = #{col}"
          winner = 1
          break
        else
-         #puts "No winner in col = #{col}"
          winner = false
          @ai.update_row_col_ranks(col_positions, col, p0count, p1count, "col" )
        end
@@ -189,7 +172,6 @@ private
  end
  
  def scan_left_diag()
-   #puts "Inside method to check left diagonal for a winner"
     	p0count = 0
   		p1count = 0
   		winner = false
@@ -199,35 +181,26 @@ private
             if(player == 0)
               p0count = p0count + 1
               left_diag_positions[i] = 0
-              #puts "[#{i}][#{i}] is occupied by player[0]"
             elsif(player == 1)
               p1count = p1count + 1
               left_diag_positions[i] = 1
-              #puts "[#{i}][#{i}] is occupied by player[1]"
             else
-              #puts "[#{i}][#{i}] is empty"
               left_diag_positions[i] = nil
             end
       end #row
       
       if(p0count == 3)
-        #puts "Winner 0 in left diagonal"
         winner = 0
       elsif (p1count == 3)
-         #puts "Winner 1 in left diagonal"
         winner = 1
       else
-        #puts "No winner in left diagonal"
         winner = false
-        #update ranks in left diagonal-------TO DO
-        #@ai.update_leftdiag_ranks(left_diag_positions, p0count, p1count)
         @ai.update_diag_ranks(left_diag_positions, p0count, p1count, "left_diag")
       end
       winner
  end
  
  def scan_right_diag()
-    #puts "Inside method to check cols for a winner"
      	p0count = 0
    		p1count = 0
    		winner = false
@@ -237,29 +210,21 @@ private
            player = @board.pos_array[row][(@board.boardsize - 1) - row].belongs_to
              if(player == 0)
                p0count = p0count + 1
-               #puts "[#{row}][#{row}] is occupied by player[0]"
                right_diag_positions[(@board.boardsize - 1) - row] = 0
              elsif(player == 1)
                p1count = p1count + 1
-               #puts "[#{row}][#{@board.boardsize - 1) - row}] is occupied by player[1]"
                right_diag_positions[row] = 1
              else
-               #puts "[#{row}][#{@board.boardsize - 1) - row}] is empty"
                right_diag_positions[row] = nil
              end
        end #row
        
        if(p0count == 3)
-         #puts "Winner 0 in right diagonal"
          winner = 0
        elsif (p1count == 3)
-          #puts "Winner 1 in right diagonal"
          winner = 1
        else
-         #puts "No winner in right diagonal"
          winner = false
-         #update ranks in right diagonal-------TO DO
-         #@ai.update_rightdiag_ranks(right_diag_positions, p0count, p1count)
          @ai.update_diag_ranks(right_diag_positions, p0count, p1count, "right_diag")
        end
        winner

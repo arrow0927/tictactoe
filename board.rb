@@ -49,9 +49,6 @@ end
 		@pos_array[choicen_position[0]][choicen_position[1]].rank0 = 0
 		@pos_array[choicen_position[0]][choicen_position[1]].rank1 = 0		
 		@occupied_positions += 1
-		puts "Board updated...\n[#{choicen_position[0]}] [#{choicen_position[1]}] belongs_to  #{@pos_array[choicen_position[0]][choicen_position[1]].belongs_to}"
-		puts "Board updated...\n[#{choicen_position[0]}] [#{choicen_position[1]}] rank0  #{@pos_array[choicen_position[0]][choicen_position[1]].rank0}"
-		puts "Board updated...\n[#{choicen_position[0]}] [#{choicen_position[1]}] rank1  #{@pos_array[choicen_position[0]][choicen_position[1]].rank1}"
 	end
 
 
@@ -90,10 +87,8 @@ end
   		  parr[row] = Array.new(BOARDSIZE)
   		  (0..BOARDSIZE - 1).each do |col|
   		    parr[row][col] = Position.new([row,col])
-  		    #puts "Adding position to (#{parr[row][col]}) = #{(parr[row][col]).inspect}"
   		  end
 		  end
-		  #puts "#{parr.inspect}"
       parr
   	end
 
@@ -110,11 +105,11 @@ end
 	  def colored_position(position)
   		colored_pos = nil
   		if( position.belongs_to == 0)		#if position belongs to player[0] it will be colored red
-  			colored_pos = "\033[31m#{position.coordinates}r0=#{position.rank0},r1=#{position.rank1}\033[0m"
+  			colored_pos = "\033[31m#{position.coordinates}\033[0m"
   		elsif ( position.belongs_to == 1)#if position belongs to player[1]] it will be colored blue
-  			colored_pos = "\033[34m#{position.coordinates}r0=#{position.rank0},r1=#{position.rank1}\033[0m"
+  			colored_pos = "\033[34m#{position.coordinates}\033[0m"
   		else		#if position is empty it will be in green
-  			colored_pos = "#{position.coordinates}r0=#{position.rank0},r1=#{position.rank1}"
+  			colored_pos = "#{position.coordinates}"
   		end
   	colored_pos		
   	end
